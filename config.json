@@ -1,7 +1,7 @@
 {
 	"eta": 0.01,
-	"max_iter": 100,
-	"training_file": "ej2-entrenamiento.txt",
-	"expected_out": "ej2-salida-deseada.txt",
+	"max_iter": 5000,
+	"training_file": "inputs/ej2-entrenamiento.txt",
+	"expected_out": "inputs/ej2-salida-deseada.txt",
 	"pixel_map": "ej3-mapa-de-pixeles.txt"
 }

@@ -23,6 +23,7 @@ class SimplePerceptron(object):
             if error < error_min:
                 error_min = error
                 w_min = self.w
+            # TODO -> Aca sería self.w = w_min no ?
             i += 1
         if i >= self.n_iterations:
             print("Error: El conjunto de entrenamiento es inseparable")
@@ -45,13 +46,3 @@ class SimplePerceptron(object):
         for xi, yi in zip(train_in, y):
             error += (yi-self.predict(xi))**2
         return error/2
-
-
-# inputs = [[1,1], [1,0], [0,1], [0,0]]
-# outputs = np.array([1, 0, 0, 0])
-
-# perceptron = SimplePerceptron()
-# perceptron.train(np.array(inputs), outputs)
-
-# inputs = np.array([[1,1], [1,0], [1,1]])
-# print(perceptron.predict(inputs)) 

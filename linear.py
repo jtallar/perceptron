@@ -3,19 +3,23 @@ import random
 
 class SimplePerceptron(object):
 
-    def __init__(self, n_iterations=10, eta=0.01):
+    def __init__(self, n_iterations=10, eta=0.01, linear=False):
         self.n_iterations = n_iterations
         self.eta = eta
+        self.linear = linear
 
     def train(self, train_in, y):
-        ones = np.ones((train_in.shape[0], 1))
-        train_in = np.concatenate((ones, train_in), axis=1)
         i = 0
+        n=0
         error_min = np.inf
         error = 1
         self.w = np.zeros(len(train_in[0]))
-        w_min = self.w
+        self.w = np.random.uniform(-100,100, size=(1,len(train_in[0])))[0]
+        w_min = []
         while error > 0 and i < self.n_iterations:
+            if n > self.n_iterations/10:
+                n = 0
+                self.w = np.random.uniform(-100,100, size=(1,len(train_in[0])))[0]
             x_i = random.randint(0,len(train_in)-1)
             predicted = self.eta * (y[x_i] - self.predict(train_in[x_i]))
             self.w += predicted * train_in[x_i]
@@ -23,14 +27,19 @@ class SimplePerceptron(object):
             if error < error_min:
                 error_min = error
                 w_min = self.w
+            # self.w = w_min
             i += 1
+            n += 1
+        print(error_min)
+
         if i >= self.n_iterations:
-            print("Error: El conjunto de entrenamiento es inseparable")
-            exit(1)
+            print(f"Finished due to reaching {self.n_iterations} iterations")
         return self
 
     def activation(self, weighted_sum):
-        return np.where(weighted_sum >= 0.0, 1, 0)
+        if self.linear:
+            return weighted_sum
+        return np.tanh(weighted_sum)
     
     def predict(self, input):
         return self.activation(np.dot(input, self.w)) 
@@ -45,13 +54,3 @@ class SimplePerceptron(object):
         for xi, yi in zip(train_in, y):
             error += (yi-self.predict(xi))**2
         return error/2
-
-
-# inputs = [[1,1], [1,0], [0,1], [0,0]]
-# outputs = np.array([1, 0, 0, 0])
-
-# perceptron = SimplePerceptron()
-# perceptron.train(np.array(inputs), outputs)
-
-# inputs = np.array([[1,1], [1,0], [1,1]])
-# print(perceptron.predict(inputs)) 
