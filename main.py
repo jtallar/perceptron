@@ -14,10 +14,10 @@ max_iter = config["max_iter"]
 eta = config["eta"]
 
 inputs = [[1,1], [1,0], [0,1], [0,0]]
-outputs = np.array([1, 0, 0, 0])
+outputs = np.array([1, 0, 0, 1])
 
 perceptron = simple.SimplePerceptron(max_iter, eta)
 perceptron.train(np.array(inputs), outputs)
 
-inputs = np.array([[1,1], [1,0], [1,1]])
-print(perceptron.predict(inputs)) 
+inputs = np.array([[1,1], [1,0], [0,1], [0,0]])
+print(perceptron.prediction(inputs)) 

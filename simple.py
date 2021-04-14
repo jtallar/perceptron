@@ -8,30 +8,46 @@ class SimplePerceptron(object):
         self.eta = eta
 
     def train(self, train_in, y):
+        ones = np.ones((train_in.shape[0], 1))
+        train_in = np.concatenate((ones, train_in), axis=1)
         i = 0
+        error_min = np.inf
         error = 1
-        total_err = 0
-        self.w = np.zeros(len(train_in[0]) + 1)
-        predictions = []
-        # error_min = np.inf
+        self.w = np.zeros(len(train_in[0]))
+        w_min = self.w
         while error > 0 and i < self.n_iterations:
+            x_i = random.randint(0,len(train_in)-1)
+            predicted = self.eta * (y[x_i] - self.predict(train_in[x_i]))
+            self.w += predicted * train_in[x_i]
+            # self.w[0] += predicted
             error = 0
-            for xi, expected in zip(train_in, y):
-                predicted = self.eta * (expected - self.predict(xi))
-                self.w[1:] += predicted * xi
-                self.w[0] += predicted
-                error += expected - predicted
-                total_err += error
-            predictions.append(predicted)
-            i+=1
+            for xi, yi in zip(train_in, y):
+                error += (yi-self.predict(xi))**2
+            error/=2
+            if error < error_min:
+                error_min = error
+                w_min = self.w
+            i += 1
+            # print(error, error_min)
+        if i >= self.n_iterations:
+            print("Error: Conjunto inseparable")
+            exit(1)
+
         return self
 
-    def activation_function(self, weighted_sum):
+    def activation(self, weighted_sum):
         return np.where(weighted_sum >= 0.0, 1, 0)
     
     def predict(self, input):
-        weighted_sum = np.dot(input, self.w[1:]) + self.w[0]
-        return self.activation_function(weighted_sum) 
+        return self.activation(np.dot(input, self.w)) 
+
+    def prediction(self, input):
+        ones = np.ones((input.shape[0], 1))
+        input = np.concatenate((ones, input), axis=1)
+        return self.activation(np.dot(input, self.w))
+
+    def get_error(self, err):
+        return err
 
 
 # inputs = [[1,1], [1,0], [0,1], [0,0]]
