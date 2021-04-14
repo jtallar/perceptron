@@ -30,7 +30,7 @@ class SimplePerceptron(object):
         return self
 
     def activation(self, weighted_sum):
-        return 0
+        return np.where(weighted_sum >= 0.0, 1, 0)
     
     def predict(self, input):
         return self.activation(np.dot(input, self.w)) 
