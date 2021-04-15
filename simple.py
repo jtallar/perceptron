@@ -23,15 +23,15 @@ class SimplePerceptron(object):
             if error < error_min:
                 error_min = error
                 w_min = self.w
-            # TODO -> Aca sería self.w = w_min no ?
+            self.w = w_min
             i += 1
-        if i >= self.n_iterations:
+        if i >= self.n_iterations and self.n_iterations >= 100:
             print("Error: El conjunto de entrenamiento es inseparable")
             exit(1)
         return self
 
     def activation(self, weighted_sum):
-        return 0
+        return np.where(weighted_sum >= 0.0, 1, 0)
     
     def predict(self, input):
         return self.activation(np.dot(input, self.w)) 
