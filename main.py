@@ -19,7 +19,7 @@ beta = config["beta"]
 # Testing Simple
 
 inputs = np.array([[1,1], [1,-1], [-1,1], [-1,-1]])
-outputs = np.array([1, 1, 1, -1])
+outputs = np.array([1, -1, -1, -1])
 perceptron = perceptron.SimplePerceptron(max_iter, eta)
 perceptron.train(inputs, outputs)
 print(perceptron.prediction(inputs)) 

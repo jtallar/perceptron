@@ -40,17 +40,7 @@ class SimplePerceptron(object):
         return self.activation(np.dot(input, self.w)) 
 
     def prediction(self, input):
-        ''' PLOT '''
-        w_x = np.linspace(-2, 2, len(self.w))     # de donde a donde se dibuja la recta de W
-        w_y = (-np.sign(self.w[0])*((self.w[2] + self.w[0] * w_x) / self.w[1]))
-        plt.plot(w_x, w_y, color="green")
-        for e in input:
-            if e[1] > (-np.sign(self.w[0])*((self.w[2] + self.w[0] * e[0]) / self.w[1])):
-                plt.scatter(e[0],e[1],color="red")
-            else:
-                plt.scatter(e[0],e[1],color="blue")
-        plt.show()
-
+        self.plot(input)
         ones = np.ones((input.shape[0], 1))
         input = np.concatenate((ones, input), axis=1)
         return self.activation(np.dot(input, self.w))
@@ -60,7 +50,17 @@ class SimplePerceptron(object):
         for xi, yi in zip(train_in, y):
             error += (yi-self.predict(xi))**2
         return error/2
-
+    
+    def plot(self, input):
+        w_x = np.linspace(np.min(input)-1, np.max(input)+1, len(self.w))     # de donde a donde se dibuja la recta de W
+        w_y = (-np.sign(self.w[0])*((self.w[2] + self.w[0] * w_x) / self.w[1]))
+        plt.plot(w_x, w_y, color="green")
+        for e in input:
+            if e[1] > (-np.sign(self.w[0])*((self.w[2] + self.w[0] * e[0]) / self.w[1])):
+                plt.scatter(e[0],e[1],color="red")
+            else:
+                plt.scatter(e[0],e[1],color="blue")
+        plt.show()
 
 class LinearOrNotPerceptron(object):
 
