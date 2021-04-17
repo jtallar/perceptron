@@ -1,10 +1,18 @@
 import numpy as np
 
 
-def read_files(training_name: str, out_name: str, number_class=float) -> (np.ndarray, np.ndarray):
-    training = read_training_set(training_name, number_class)
-    output = read_desired_output(out_name, number_class)
-    return np.array(training), np.array(output)
+def read_files(training_name: str, out_name: str, number_class=float,
+               normalize_o: bool = False) -> (np.ndarray, np.ndarray):
+
+    # read, save training data
+    training = np.array(read_training_set(training_name, number_class))
+
+    # read, save and if asked normalize expected output data
+    output = np.array(read_desired_output(out_name, number_class))
+    if normalize_o:
+        output = normalize_data(output)
+
+    return training, output
 
 
 def read_training_set(file_name: str, number_class=float) -> []:
@@ -31,5 +39,5 @@ def read_desired_output(file_name: str, number_class=float) -> []:
     return output
 
 
-def normalize_data(desired_output_data: np.ndarray) -> np.ndarray:
-    return 2. * (desired_output_data - np.min(desired_output_data)) / np.ptp(desired_output_data) - 1
+def normalize_data(data: np.ndarray) -> np.ndarray:
+    return 2. * (data - np.min(data)) / np.ptp(data) - 1

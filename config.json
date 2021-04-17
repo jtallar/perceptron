@@ -1,9 +1,18 @@
 {
 	"eta": 0.1,
 	"max_iter": 55000,
-	"linear": "false",
 	"beta": 0.4,
+	"system": "linear",
+
+	"float_data": true,
 	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out": "inputs/ej2-salida-deseada.txt",
+	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"normalize_expected_out_file": false,
+
+	"randomize_w": false,
+	"change_w_iterations": 100,
+	"randomize_w_refs": 100,
+
+
 	"pixel_map": "ej3-mapa-de-pixeles.txt"
 }
