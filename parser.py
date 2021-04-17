@@ -1,22 +1,31 @@
 import numpy as np
 
-def training(train_name, out_name):
-    train_file = open(train_name, "r")
-    output = outputs(out_name)
-    data = []
-    final = []
-    for line in train_file:
-        data = []
-        data.append(1.0)
-        for n in line.split():
-            data.append(float(n))
-        final.append(data)
-    return np.array(final), np.array(output)
 
-def outputs(file_name):
+def read_files(training_name: str, out_name: str, number_class=float):
+    training = read_training_set(training_name, number_class)
+    output = read_desired_output(out_name, number_class)
+    return np.array(training), np.array(output)
+
+
+def read_training_set(file_name: str, number_class=float):
+    training_file = open(file_name, "r")
+    training = []
+    # each line has several numbers
+    # initialize with 1 for later multiplication with w0
+    for line in training_file:
+        data = [number_class(1)]
+        # for each number, append it
+        for n in line.split():
+            data.append(number_class(n))
+        training.append(data)
+    return training
+
+
+def read_desired_output(file_name: str, number_class=float):
     output_file = open(file_name, "r")
-    outputs = []
+    output = []
     for line in output_file:
-        output = float(line.split()[0])
-        outputs.append(output)
-    return outputs
+        # append the number of the first item in line split
+        # there is only one
+        output.append(number_class(line.split()[0]))
+    return output
