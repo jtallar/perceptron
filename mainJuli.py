@@ -1,7 +1,7 @@
 import sys
 import json
 import numpy as np
-import perceptron
+import perceptronJuli
 import parser
 
 # Read configurations from file
@@ -20,7 +20,7 @@ beta = config["beta"]
 
 inputs = np.array([[1,1], [1,-1], [-1,1], [-1,-1]])
 outputs = np.array([1, -1, -1, -1])
-perceptron = perceptron.SimplePerceptron(max_iter, eta)
+perceptron = perceptronJuli.SimplePerceptron(max_iter, eta)
 perceptron.train(inputs, outputs)
 print(perceptron.prediction(inputs)) 
 
