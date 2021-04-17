@@ -1,13 +1,13 @@
 import numpy as np
 
 
-def read_files(training_name: str, out_name: str, number_class=float):
+def read_files(training_name: str, out_name: str, number_class=float) -> (np.ndarray, np.ndarray):
     training = read_training_set(training_name, number_class)
     output = read_desired_output(out_name, number_class)
     return np.array(training), np.array(output)
 
 
-def read_training_set(file_name: str, number_class=float):
+def read_training_set(file_name: str, number_class=float) -> []:
     training_file = open(file_name, "r")
     training = []
     # each line has several numbers
@@ -21,7 +21,7 @@ def read_training_set(file_name: str, number_class=float):
     return training
 
 
-def read_desired_output(file_name: str, number_class=float):
+def read_desired_output(file_name: str, number_class=float) -> []:
     output_file = open(file_name, "r")
     output = []
     for line in output_file:
@@ -29,3 +29,7 @@ def read_desired_output(file_name: str, number_class=float):
         # there is only one
         output.append(number_class(line.split()[0]))
     return output
+
+
+def normalize_data(desired_output_data: np.ndarray) -> np.ndarray:
+    return 2. * (desired_output_data - np.min(desired_output_data)) / np.ptp(desired_output_data) - 1
