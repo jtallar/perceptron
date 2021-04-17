@@ -17,6 +17,7 @@ beta: float = config["beta"]
 training_file_name: str = config["training_file"]
 expected_out_file_name: str = config["expected_out_file"]
 number_class = float if config["float_data"] else int
+threshold: int = config["threshold"]
 
 normalize_expected_out_file: bool = config["normalize_expected_out_file"]
 
@@ -34,7 +35,7 @@ activation_function = activation_functions_dict[config["system"]]
 
 # read the files
 training, outputs = parser.read_files(training_file_name, expected_out_file_name,
-                                      number_class, normalize_expected_out_file)
+                                      number_class, normalize_expected_out_file, threshold)
 
 # initialize perceptron
 perceptron = perceptron.Perceptron(activation_function, len(training[0]))
@@ -44,5 +45,5 @@ print(perceptron.train(training, outputs, max_iter, eta,
                        randomize_w, randomize_w_refs, change_w_iterations))
 
 # print difference between the real output and the one from the perceptron
-print(perceptron.diff_predict_expected(outputs, training) * 100)
+print(perceptron.diff_predict_expected(outputs, training))
 

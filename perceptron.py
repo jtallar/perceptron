@@ -60,7 +60,7 @@ class Perceptron(object):
 
     # given the input, and the expected value, get the difference while applying the activation function
     def diff_predict_expected(self, expected, input_data: np.ndarray) -> float:
-        return (expected - self.predict(input_data))/100
+        return expected - self.predict(input_data)
 
     # given an already trained (or not) perceptron and a input, get the prediction value/s made
     def predict(self, input_data: np.ndarray):
