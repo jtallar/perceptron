@@ -2,17 +2,19 @@
 	"eta": 0.01,
 	"beta": 0.4,
 	"threshold": 1,
-	"max_iter": 55000,
+	"max_iter": 5500,
+	"error_threshold": 0.0001,
 	"system": "linear",
 
 	"float_data": true,
 	"training_file": "inputs/ej2-entrenamiento.txt",
 	"expected_out_file": "inputs/ej2-salida-deseada.txt",
-	"normalize_expected_out_file": false,
 
 	"randomize_w": false,
 	"change_w_iterations": 100,
 	"randomize_w_refs": 100,
+
+	"steps_graph_3d": 25,
 
 	"pixel_map": "ej3-mapa-de-pixeles.txt"
 }
