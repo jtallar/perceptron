@@ -65,3 +65,24 @@ print(perceptron.diff_predict_expected(outputs, training))
 # plot the graphic with the training set
 perceptron.plot(training, steps_graph_3d)
 
+'''
+tenemos entonces, conjunto entranamiento de N x 3
+
+primera capa, todo perceptron elije la misma entrada
+
+entrada y w hace estado activacion
+
+estado activacion de cada uno hace de entrada para capa superior
+
+capa + 1 con entrada t w hace estado activacion
+
+...
+
+ultima capa calcula su delta w con salida esperada
+
+el nuevo W calculado se usa para recalcular W en capa inferior
+
+capa - 1 calcula delta w con: 1 Wi de cada capa sup (hay que separar de donde viene)
+
+
+'''

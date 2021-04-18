@@ -60,7 +60,7 @@ class SimplePerceptron(object):
         return i, error, self.w
 
     # given an already trained (or not) perceptron and a input, get the prediction value/s made
-    def predict(self, input_data: np.ndarray):
+    def predict(self, input_data):
         return self.act_func(np.dot(input_data, self.w))
 
     # predict derivative of the activation function
@@ -68,11 +68,8 @@ class SimplePerceptron(object):
         return self.act_func_der(np.dot(input_data, self.w))
 
     # calculate the error of the perceptron given a training and expected output set
-    def error(self, x, y):
-        aux = 0.0
-        for xi, yi in zip(x, y):
-            aux += abs((yi - self.predict(xi)) ** 2)
-        return aux / 2
+    def error(self, x: np.ndarray, y: np.ndarray):
+        return np.sum(np.abs((y - self.predict(x)) ** 2)) / 2
 
     # initialize w array randomly or not
     def init_w(self, random_w: bool, ref: int) -> np.ndarray:
