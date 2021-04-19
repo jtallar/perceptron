@@ -1,6 +1,5 @@
 import multiprocessing.pool
 import numpy as np
-import traceback
 
 
 class SimplePerceptron(object):
@@ -113,7 +112,7 @@ class ComplexPerceptron(object):
         if not error_enhance:
             return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
 
-        return np.sum((1 + out) * np.log((1 + out) / (1 + self.activation(inp))) / 2 +
+        return np.sum((1 + out) * np.log(np.divide((1 + out), (1 + self.activation(inp)))) / 2 +
                       (1 - out) * np.log(np.divide((1 - out), (1 - self.activation(inp)))) / 2)
 
     # resets the w to a randomize range if desired for the entire network

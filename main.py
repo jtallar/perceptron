@@ -35,7 +35,7 @@ training_set, expected_out_set, number_class = parser.read_files(config["trainin
                                                                  config["system_threshold"])
 
 # normalize expected out data if required
-expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") | \
+expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") or \
                                                               (config["system"] == "exp") else None
 
 # activation function and its derived, if derived is not used then returns always 1
@@ -52,7 +52,7 @@ perceptron.randomize_w(randomize_w_ref) if randomize_w else None
 
 # start the training iterations
 
-# counters and lenght
+# counters and length
 p: int = len(training_set)
 i: int = 0
 n: int = 0
@@ -70,7 +70,7 @@ k: int = 0
 while error > error_threshold and i < iteration_threshold:
 
     # in case there is random w, randomize it again
-    if reset_w & n > p * reset_w_iterations:
+    if reset_w and (n > p * reset_w_iterations):
         perceptron.randomize_w(randomize_w_ref)
         n = 0
 
@@ -94,9 +94,9 @@ while error > error_threshold and i < iteration_threshold:
         # the delta error changes direction, reset k (-1 +1 = 0)
         if (delta_error > new_delta_error) != delta_error_dec:
             k = -1
-        if (k == dec_k) & delta_error_dec:
+        if k == dec_k and delta_error_dec:
             eta += a
-        if (k == inc_k) & (not delta_error_dec):
+        if k == inc_k and not delta_error_dec:
             eta -= b * eta
 
         delta_error_dec = delta_error > new_delta_error
