@@ -17,6 +17,13 @@
 	"reset_w_iterations": 100,
 
 	"retro_error_enhance": false,
+
 	"momentum": true,
-	"momentum_alpha": 0.9
+	"momentum_alpha": 0.9,
+
+	"general_adaptive_eta": false,
+	"a": 0.0005,
+	"delta_error_decrease_iterations": 10,
+	"b": 0.0005,
+	"delta_error_increase_iterations": 15
 }
