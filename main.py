@@ -58,7 +58,7 @@ i: int = 0
 n: int = 0
 
 # error handling
-error: float = 1
+error: float = np.inf
 error_min: float = np.inf
 
 # adaptive eta vars
@@ -90,16 +90,17 @@ while error > error_threshold and i < iteration_threshold:
 
     # adaptive eta
     if general_adaptive_eta:
+        new_delta_error: float = error - new_error
         # the delta error changes direction, reset k (-1 +1 = 0)
-        if (error > new_error) != delta_error_dec:
+        if (delta_error > new_delta_error) != delta_error_dec:
             k = -1
-        if k == dec_k & delta_error_dec:
+        if (k == dec_k) & delta_error_dec:
             eta += a
-        if k == inc_k & (not delta_error_dec):
+        if (k == inc_k) & (not delta_error_dec):
             eta -= b * eta
 
-        delta_error_dec = error > new_error
-        delta_error = error - new_error
+        delta_error_dec = delta_error > new_delta_error
+        delta_error = new_delta_error
         k += 1
 
     error = new_error

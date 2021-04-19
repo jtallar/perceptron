@@ -18,12 +18,12 @@
 
 	"retro_error_enhance": false,
 
-	"momentum": true,
+	"momentum": false,
 	"momentum_alpha": 0.9,
 
-	"general_adaptive_eta": false,
+	"general_adaptive_eta": true,
 	"a": 0.0005,
-	"delta_error_decrease_iterations": 10,
+	"delta_error_decrease_iterations": 2,
 	"b": 0.0005,
-	"delta_error_increase_iterations": 15
+	"delta_error_increase_iterations": 5
 }
