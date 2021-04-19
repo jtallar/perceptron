@@ -1,18 +1,23 @@
 import numpy as np
 
 
-def read_files(training_name: str, out_name: str, number_class=float,
-               normalize_o: bool = False, threshold: int = 1) -> (np.ndarray, np.ndarray):
+def read_files(training_name: str, out_name: str, normalize_o: bool = False,
+               threshold: int = 1) -> (np.ndarray, np.ndarray):
 
-    # read, save training data
-    training = np.array(parse_file_set(training_name, number_class, threshold, training=True))
+    number_class = int
+    try:
+        # read, save training data
+        training = np.array(parse_file_set(training_name, number_class, threshold, training=True))
+    except ValueError:
+        number_class = float
+        training = np.array(parse_file_set(training_name, number_class, threshold, training=True))
 
     # read, save and if asked normalize expected output data
     output = np.array(parse_file_set(out_name, number_class, threshold, training=False))
     if normalize_o:
         output = normalize_data(output)
 
-    return training, output
+    return training, output, number_class
 
 
 def parse_file_set(file_name: str, number_class=float, threshold: int = 1, training: bool = False) -> []:

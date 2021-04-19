@@ -10,16 +10,16 @@ class SimplePerceptron(object):
         self.hidden: bool = hidden
         self.act_func = activation_function
         self.act_func_der = activation_function_derived
-        self.w: np.ndarray = np.random.uniform(-1.0, 1.0, dimension)
+        self.w: np.ndarray = np.zeros(dimension)
         self.input: np.ndarray = np.zeros(dimension)
 
     # out, a 1D array, is used only in the most superior layer
     # sup_w is a 2D matrix with all the W vectors of the superior layer
     # sup_phi is a 1D array, resulting in all the phi? values of the superior layer
     # the two above are only used in hidden layers
-    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_phi: np.ndarray, eta: float):
+    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_phi: np.ndarray, eta: float) -> (np.ndarray, float):
         # activation for this neuron
-        activation_derived = self.activation_derived(self.input)
+        activation_derived = self.__activation_derived(self.input)
 
         # phi? sub i using the activation values
         if not self.hidden:
@@ -40,24 +40,27 @@ class SimplePerceptron(object):
         # activation for this neuron, could be int or float, or an array in case is the full dataset
         return self.act_func(np.dot(input_arr, self.w))
 
-    # returns the derived activation value/s for the given input in this neuron
-    # returns int or float depending on the input data and activation function
-    def activation_derived(self, input_arr: np.ndarray):
-        # activation for this neuron
-        return self.act_func_der(np.dot(input_arr, self.w))
-
     # calculates the error given the full training dataset
-    def error(self, inp: np.ndarray, out: np.ndarray):
+    def error(self, inp: np.ndarray, out: np.ndarray) -> float:
         return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
 
-    def get_index(self) -> int:
-        return self.index
+    # resets the w to a randomize range
+    def randomize_w(self, ref: int) -> None:
+        self.w = np.random.uniform(-ref, ref, len(self.w))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"SPerceptron=(index={self.index}, hidden={self.hidden}, w={self.w})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"SPerceptron=(index={self.index}, hidden={self.hidden}, w={self.w})"
+
+    # private methods
+
+    # returns the derived activation value/s for the given input in this neuron
+    # returns int or float depending on the input data and activation function
+    def __activation_derived(self, input_arr: np.ndarray):
+        # activation for this neuron
+        return self.act_func_der(np.dot(input_arr, self.w))
 
 
 class ComplexPerceptron(object):
@@ -67,13 +70,11 @@ class ComplexPerceptron(object):
 
         self.act_func = activation_function
         self.act_func_der = activation_function_derived
-
-        # initialize (empty) the general array with layout length plus the output layer
-        self.network = np.empty(shape=len(layout)+1, dtype=np.ndarray)
-        self.init_network(layout, input_dim, output_dim)
+        self.network = None
+        self.__init_network(layout, input_dim, output_dim)
 
     # train with the input dataset the complex perceptron
-    def train(self, training_set: np.ndarray, expected_out: np.ndarray, eta: float = 0.01):
+    def train(self, training_set: np.ndarray, expected_out: np.ndarray, eta: float = 0.01) -> None:
 
         # propagate activation values while saving the input data, first one is training set
         self.activation(training_set, training=True)
@@ -91,7 +92,7 @@ class ComplexPerceptron(object):
     # propagates input along the entire network
     # in case of training, saves  the input for later computation on retro propagation
     # returns the final activation value
-    def activation(self, init_input: np.ndarray, training: bool = False):
+    def activation(self, init_input: np.ndarray, training: bool = False) -> np.ndarray:
         activation_values = init_input
         for layer in self.network:
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
@@ -104,11 +105,28 @@ class ComplexPerceptron(object):
     def error(self, inp: np.ndarray, out: np.ndarray) -> float:
         return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
 
+    # resets the w to a randomize range if desired for the entire network
+    # if randomize is false, then does nothing
+    def randomize_w(self, ref: int) -> None:
+        for layer in self.network:
+            pool = multiprocessing.pool.ThreadPool(processes=len(layer))
+            pool.map(lambda s_p: s_p.randomize_w(ref), layer)
+
+    def __str__(self) -> str:
+        return f"CPerceptron=({self.network})"
+
+    def __repr__(self) -> str:
+        return f"CPerceptron=({self.network})"
+
+    # private methods
+
     # initializes the entire network of perceptron given a layout
-    # it is assumed that the network is defined in size by the amount of levels
-    def init_network(self, layout: [int], input_dim: int, output_dim: int) -> None:
+    def __init_network(self, layout: [int], input_dim: int, output_dim: int) -> None:
         # the final amount of perceptron depends on expected output dimension
         layout.append(output_dim)
+
+        # initialize the length of the network
+        self.network = np.empty(shape=len(layout), dtype=np.ndarray)
 
         # for each level, get its count of perceptron
         for level in range(len(layout)):
@@ -125,9 +143,3 @@ class ComplexPerceptron(object):
                 self.network[level][index] = \
                     SimplePerceptron(self.act_func, self.act_func_der,
                                      dim, level != len(layout) - 1, index)
-
-    def __str__(self):
-        return f"CPerceptron=({self.network})"
-
-    def __repr__(self):
-        return f"CPerceptron=({self.network})"

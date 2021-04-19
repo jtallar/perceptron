@@ -1,20 +1,18 @@
 {
+	"training_file": "inputs/ej1-entrenamiento.txt",
+	"expected_out_file": "inputs/ej1a-salida-deseada.txt",
+
 	"eta": 0.001,
 	"beta": 0.4,
-	"threshold": 1,
-	"max_iter": 500,
+	"system_threshold": 1,
+	"iteration_threshold": 500,
 	"error_threshold": 0.0001,
-	"system": "tanh",
+	"system": "sign",
 
-	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"layout": [],
 
 	"randomize_w": false,
-	"change_w_iterations": 100,
-	"randomize_w_refs": 100,
-
-	"steps_graph_3d": 25,
-
-	"complex_layout": [10],
-	"pixel_map": "ej3-mapa-de-pixeles.txt"
+	"randomize_w_ref": 1,
+	"reset_w": false,
+	"reset_w_iterations": 100
 }
