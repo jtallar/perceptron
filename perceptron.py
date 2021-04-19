@@ -15,21 +15,21 @@ class SimplePerceptron(object):
 
     # out, a 1D array, is used only in the most superior layer
     # sup_w is a 2D matrix with all the W vectors of the superior layer
-    # sup_phi is a 1D array, resulting in all the phi? values of the superior layer
+    # sup_delta is a 1D array, resulting in all the delta values of the superior layer
     # the two above are only used in hidden layers
-    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_phi: np.ndarray, eta: float) -> (np.ndarray, float):
+    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_delta: np.ndarray, eta: float) -> (np.ndarray, float):
         # activation for this neuron
         activation_derived = self.__activation_derived(self.input)
 
-        # phi? sub i using the activation values
+        # delta sub i using the activation values
         if not self.hidden:
-            phi = (out[self.index] - self.activation(self.input)) * activation_derived
+            delta = (out[self.index] - self.activation(self.input)) * activation_derived
         else:
-            phi = np.dot(sup_phi, sup_w[:, self.index]) * activation_derived
+            delta = np.dot(sup_delta, sup_w[:, self.index]) * activation_derived
 
-        self.w += (eta * phi * self.input)
+        self.w += (eta * delta * self.input)
 
-        return self.w, phi
+        return self.w, delta
 
     # returns the activation value/s for the given input in this neuron
     # returns int or float depending on the input data and activation function
@@ -79,15 +79,15 @@ class ComplexPerceptron(object):
         # propagate activation values while saving the input data, first one is training set
         self.activation(training_set, training=True)
 
-        # retro propagate the phi?
+        # retro propagate the delta
         sup_w: np.ndarray = np.empty(1)
-        sup_phi: np.ndarray = np.empty(1)
+        sup_delta: np.ndarray = np.empty(1)
         for layer in reversed(self.network):
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
-            sup_w, sup_phi = zip(*pool.map(lambda s_p: s_p.train(expected_out, sup_w, sup_phi, eta), layer))
+            sup_w, sup_delta = zip(*pool.map(lambda s_p: s_p.train(expected_out, sup_w, sup_delta, eta), layer))
             # convert tuples to lists
             sup_w = np.asarray(sup_w)
-            sup_phi = np.asarray(sup_phi)
+            sup_delta = np.asarray(sup_delta)
 
     # propagates input along the entire network
     # in case of training, saves  the input for later computation on retro propagation
