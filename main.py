@@ -36,7 +36,8 @@ act_funcs = functions.get_activation_functions(config["system"], config["beta"],
 
 # initialize the perceptron completely
 perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
-                                          len(training_set[0]), len(expected_out_set[0]))
+                                          len(training_set[0]), len(expected_out_set[0]),
+                                          config["momentum"], config["momentum_alpha"])
 
 # randomize the perceptron initial weights if needed
 perceptron.randomize_w(randomize_w_ref) if randomize_w else None

@@ -16,5 +16,7 @@
 	"reset_w": false,
 	"reset_w_iterations": 100,
 
-	"retro_error_enhance": true
+	"retro_error_enhance": false,
+	"momentum": true,
+	"momentum_alpha": 0.9
 }

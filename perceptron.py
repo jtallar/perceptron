@@ -6,13 +6,19 @@ import traceback
 class SimplePerceptron(object):
 
     def __init__(self, activation_function, activation_function_derived,
-                 dimension: int, hidden: bool = False, index: int = 0):
+                 dimension: int, hidden: bool = False, index: int = 0,
+                 momentum: bool = False, mom_alpha: float = 0.9):
         self.index = index
         self.hidden: bool = hidden
         self.act_func = activation_function
         self.act_func_der = activation_function_derived
         self.w: np.ndarray = np.zeros(dimension)
         self.input: np.ndarray = np.zeros(dimension)
+
+        # momentum correction data
+        self.prev_delta_w = np.zeros(dimension)
+        self.momentum: bool = momentum
+        self.mom_alpha: float = mom_alpha
 
     # out, a 1D array, is used only in the most superior layer
     # sup_w is a 2D matrix with all the W vectors of the superior layer
@@ -28,7 +34,14 @@ class SimplePerceptron(object):
         else:
             delta = np.dot(sup_delta, sup_w[:, self.index]) * activation_derived
 
-        self.w += (eta * delta * self.input)
+        # calculate the delta w
+        delta_w = (eta * delta * self.input)
+        self.w += delta_w
+
+        # in case of momentum, calculate delta w and update values
+        if self.momentum:
+            self.w += self.mom_alpha * self.prev_delta_w
+            self.prev_delta_w = delta_w
 
         return self.w, delta
 
@@ -59,12 +72,13 @@ class SimplePerceptron(object):
 class ComplexPerceptron(object):
 
     def __init__(self, activation_function, activation_function_derived,
-                 layout: [int], input_dim: int, output_dim: int):
+                 layout: [int], input_dim: int, output_dim: int,
+                 momentum: bool = False, mom_alpha: float = 0.9):
 
         self.act_func = activation_function
         self.act_func_der = activation_function_derived
         self.network = None
-        self.__init_network(layout, input_dim, output_dim)
+        self.__init_network(layout, input_dim, output_dim, momentum, mom_alpha)
 
     # train with the input dataset the complex perceptron
     def train(self, training_set: np.ndarray, expected_out: np.ndarray, eta: float = 0.01) -> None:
@@ -124,7 +138,8 @@ class ComplexPerceptron(object):
     # private methods
 
     # initializes the entire network of perceptron given a layout
-    def __init_network(self, layout: [int], input_dim: int, output_dim: int) -> None:
+    def __init_network(self, layout: [int], input_dim: int, output_dim: int,
+                       momentum: bool = False, mom_alpha: float = 0.9) -> None:
         # the final amount of perceptron depends on expected output dimension
         layout.append(output_dim)
 
@@ -144,5 +159,5 @@ class ComplexPerceptron(object):
             for index in range(layout[level]):
                 # for each index and level, create the corresponding perceptron
                 self.network[level][index] = \
-                    SimplePerceptron(self.act_func, self.act_func_der,
-                                     dim, level != len(layout) - 1, index)
+                    SimplePerceptron(self.act_func, self.act_func_der, dim,
+                                     level != len(layout) - 1, index, momentum, mom_alpha)
