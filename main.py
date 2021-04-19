@@ -24,8 +24,10 @@ reset_w_iterations: int = config["reset_w_iterations"]
 
 # read the files and get the training data, and expected out data
 training_set, expected_out_set, number_class = parser.read_files(config["training_file"], config["expected_out_file"],
-                                                                 (config["system"] == "tanh") | (config["system"] == "exp"),
                                                                  config["system_threshold"])
+
+# normalize expected out data if required
+expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") | (config["system"] == "exp") else None
 
 # activation function and its derived, if derived is not used then return 1
 beta: float = config["beta"]

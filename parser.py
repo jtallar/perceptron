@@ -14,8 +14,6 @@ def read_files(training_name: str, out_name: str, normalize_o: bool = False,
 
     # read, save and if asked normalize expected output data
     output = np.array(parse_file_set(out_name, number_class, threshold, training=False))
-    if normalize_o:
-        output = normalize_data(output)
 
     return training, output, number_class
 
