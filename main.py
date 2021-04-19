@@ -1,13 +1,14 @@
 import json
 import math
+import random
 
 import numpy as np
-
 import parser
-import perceptron
-
 
 # Read configurations from file
+import perceptron
+import perceptron1
+
 with open("config.json") as file:
     config = json.load(file)
 
@@ -25,6 +26,8 @@ error_threshold: float = config["error_threshold"]
 randomize_w: bool = config["randomize_w"]
 randomize_w_refs: int = config["randomize_w_refs"]
 change_w_iterations: int = config["change_w_iterations"]
+
+complex_layout: [int] = config["complex_layout"]
 
 steps_graph_3d: int = config["steps_graph_3d"]
 
@@ -47,42 +50,52 @@ activation_functions_dict = {
 activation_functions = activation_functions_dict[config["system"]]
 normalize_expected_out_file: bool = (config["system"] == "tanh") | (config["system"] == "exp")
 
-
 # read the files
-training, outputs = parser.read_files(training_file_name, expected_out_file_name,
-                                      number_class, normalize_expected_out_file, threshold)
+training_data, expected_out_data = parser.read_files(training_file_name, expected_out_file_name,
+                                                     number_class, normalize_expected_out_file, threshold)
 
-# initialize perceptron
-perceptron = perceptron.SimplePerceptron(activation_functions, len(training[0]))
+# initialize the perceptron completely
+perceptron = perceptron.ComplexPerceptron(*tuple(activation_functions), complex_layout, len(training_data[0]))
 
-# train perceptron and print step count and w
-print(perceptron.train(training, outputs, max_iter, eta, error_threshold,
-                       randomize_w, randomize_w_refs, change_w_iterations))
+p: int = len(training_data)
+i: int = 0
+error_min: float = np.inf
+error: float = 1
 
-# print difference between the real output and the one from the perceptron
-print(perceptron.diff_predict_expected(outputs, training))
+# finish only when error is 0 or reached max iterations
+while error > error_threshold and i < max_iter:
 
-# plot the graphic with the training set
-perceptron.plot(training, steps_graph_3d)
+    # random index to analyze a training set
+    index = random.randint(0, p - 1)
 
-'''
-tenemos entonces, conjunto entranamiento de N x 3
+    # train the perceptron with only the given input
+    perceptron.train(training_data[index], expected_out_data[index], eta)
 
-primera capa, todo perceptron elije la misma entrada
+    # calculate error on the output laye
+    error = perceptron.error(training_data, expected_out_data)
 
-entrada y w hace estado activacion
+    # update or not min error
+    if error < error_min:
+        error_min = error
 
-estado activacion de cada uno hace de entrada para capa superior
+    i += 1
 
-capa + 1 con entrada t w hace estado activacion
-
-...
-
-ultima capa calcula su delta w con salida esperada
-
-el nuevo W calculado se usa para recalcular W en capa inferior
-
-capa - 1 calcula delta w con: 1 Wi de cada capa sup (hay que separar de donde viene)
+print(perceptron)
+print(f"error is: {error_min}, iterations: {i}")
+for data in training_data:
+    print(perceptron.activation(np.array(data)))
+# finished
 
 
-'''
+# # initialize perceptron ONLY SIMPLE
+# perceptron = perceptron1.SimplePerceptron(activation_functions, len(training_data[0]))
+#
+# # train perceptron and print step count and w
+# print(perceptron.train(training_data, expected_out_data, max_iter, eta, error_threshold,
+#                        randomize_w, randomize_w_refs, change_w_iterations))
+#
+# # print difference between the real output and the one from the perceptron
+# print(perceptron.diff_predict_expected(expected_out_data, training_data))
+#
+# # plot the graphic with the training set
+# perceptron.plot(training_data, steps_graph_3d)

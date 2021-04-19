@@ -1,18 +1,20 @@
 {
-	"eta": 0.01,
+	"eta": 0.0001,
 	"beta": 0.4,
 	"threshold": 1,
 	"max_iter": 5500,
 	"error_threshold": 0.0001,
-	"system": "linear",
+	"system": "tanh",
 
-	"float_data": true,
-	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"float_data": false,
+	"training_file": "inputs/ej1-entrenamiento.txt",
+	"expected_out_file": "inputs/ej1a-salida-deseada.txt",
 
 	"randomize_w": false,
 	"change_w_iterations": 100,
 	"randomize_w_refs": 100,
+
+	"complex_layout": [3, 1],
 
 	"steps_graph_3d": 25,
 
