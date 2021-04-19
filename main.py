@@ -86,6 +86,5 @@ while error > error_threshold and i < iteration_threshold:
 print(perceptron)
 print(f"error is: {error_min}, iterations: {i}")
 for data, out in zip(training_set, expected_out_set):
-    print(
-        f"in: {data}, expected: {out}, out: {perceptron.activation(np.array(data))}, error: {perceptron.error(data, out)}")
+    print(f"in: {data}, out: {perceptron.activation(np.array(data))}, err: {perceptron.error(data, out)}")
 # finished

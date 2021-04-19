@@ -49,10 +49,10 @@ class SimplePerceptron(object):
         self.w = np.random.uniform(-ref, ref, len(self.w))
 
     def __str__(self) -> str:
-        return f"SPerceptron=(index={self.index}, hidden={self.hidden}, w={self.w})"
+        return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
 
     def __repr__(self) -> str:
-        return f"SPerceptron=(index={self.index}, hidden={self.hidden}, w={self.w})"
+        return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
 
     # private methods
 
@@ -113,10 +113,16 @@ class ComplexPerceptron(object):
             pool.map(lambda s_p: s_p.randomize_w(ref), layer)
 
     def __str__(self) -> str:
-        return f"CPerceptron=({self.network})"
+        out: str = "CPerceptron=("
+        for i, layer in enumerate(self.network):
+            out += f"\nlayer {i}=" + str(layer)
+        return out + ")"
 
     def __repr__(self) -> str:
-        return f"CPerceptron=({self.network})"
+        out: str = "CPerceptron=("
+        for i, layer in enumerate(self.network):
+            out += f"\nlayer {i}=" + str(layer)
+        return out + ")"
 
     # private methods
 
