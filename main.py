@@ -31,19 +31,22 @@ b: float = config["b"]
 inc_k: int = config["delta_error_increase_iterations"]
 
 # read the files and get the training data, and expected out data
-training_set, expected_out_set, number_class = parser.read_files(config["training_file"], config["expected_out_file"],
-                                                                 config["system_threshold"])
+full_training_set, full_expected_out_set, number_class = parser.read_files(config["training_file"],
+                                                                           config["expected_out_file"],
+                                                                           config["system_threshold"])
 
-# TODO: remover elementos del training para probar cosas ( tambien sus correspondientes expected out)
 # normalize expected out data if required
-expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") or \
-                                                              (config["system"] == "exp") else expected_out_set
+full_expected_out_set = parser.normalize_data(full_expected_out_set) if (config["system"] == "tanh") or \
+                                                              (config["system"] == "exp") else full_expected_out_set
 
+# keep only a portion of the full data set for training
+training_set, expected_out_set, test_training_set, test_expected_out_set \
+    = parser.extract_subset(full_training_set, full_expected_out_set, config["training_ratio"])
 
 # activation function and its derived, if derived is not used then returns always 1
 act_funcs = functions.get_activation_functions(config["system"], config["beta"],
                                                config["retro_error_enhance"], number_class)
-print()
+
 # initialize the perceptron completely
 perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
                                           len(training_set[0]), len(expected_out_set[0]),
@@ -110,8 +113,20 @@ while error > error_threshold and i < iteration_threshold:
     n += 1
 
 # finished, perceptron trained
-print(perceptron)
-print(f"error is: {error_min}, iterations: {i}")
+# print(perceptron)
+print(f"Training finished, error is: {error_min}, iterations: {i}")
+input("\nPress enter to check the error per the given training set")
+r_pos: int = 3
 for data, out in zip(training_set, expected_out_set):
-    print(f"in: {data}, expected: {out}, out: {perceptron.activation(np.array(data))}, err: {perceptron.error(data, out)}")
+    print(f"in: {np.round(data, r_pos)}, "
+          f"exp: {np.round(out, r_pos)}, "
+          f"out: {np.round(perceptron.activation(np.array(data)), r_pos)}, "
+          f"err: {np.round(perceptron.error(data, out), r_pos)}")
+
+input("\nPress enter to check the result with the test training set")
+for data, out in zip(test_training_set, test_expected_out_set):
+    print(f"in: {np.round(data, r_pos)}, "
+          f"exp: {np.round(out, r_pos)}, "
+          f"out: {np.round(perceptron.activation(np.array(data)), r_pos)}, "
+          f"err: {np.round(perceptron.error(data, out), r_pos)}")
 # finished

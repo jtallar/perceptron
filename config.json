@@ -1,13 +1,14 @@
 {
 	"training_file": "inputs/ej3-entrenamiento.txt",
 	"expected_out_file": "inputs/ej3-salida-deseada.txt",
+	"training_ratio": 0.5,
 
 	"eta": 0.001,
 	"beta": 0.4,
 	"system_threshold": 1,
-	"iteration_threshold": 500,
+	"iteration_threshold": 5000,
 	"error_threshold": 0.0001,
-	"system": "linear",
+	"system": "tanh",
 
 	"layout": [10, 3],
 
@@ -18,7 +19,7 @@
 
 	"retro_error_enhance": false,
 
-	"momentum": false,
+	"momentum": true,
 	"momentum_alpha": 0.9,
 
 	"general_adaptive_eta": true,
