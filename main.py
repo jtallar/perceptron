@@ -60,7 +60,7 @@ activation_functions_dict = {
 activation_functions = activation_functions_dict[config["system"]]
 
 # initialize the perceptron completely
-perceptron = perceptron.ComplexPerceptron(*tuple(activation_functions), complex_layout, len(training_data[0]))
+perceptron = perceptron.ComplexPerceptron(*tuple(activation_functions), complex_layout, len(training_data[0]), len(expected_out_data[0]))
 
 p: int = len(training_data)
 i: int = 0

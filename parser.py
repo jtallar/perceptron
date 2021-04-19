@@ -5,38 +5,29 @@ def read_files(training_name: str, out_name: str, number_class=float,
                normalize_o: bool = False, threshold: int = 1) -> (np.ndarray, np.ndarray):
 
     # read, save training data
-    training = np.array(read_training_set(training_name, number_class, threshold))
+    training = np.array(parse_file_set(training_name, number_class, threshold, training=True))
 
     # read, save and if asked normalize expected output data
-    output = np.array(read_desired_output(out_name, number_class))
+    output = np.array(parse_file_set(out_name, number_class, threshold, training=False))
     if normalize_o:
         output = normalize_data(output)
 
     return training, output
 
 
-def read_training_set(file_name: str, number_class=float, threshold: int = 1) -> []:
+def parse_file_set(file_name: str, number_class=float, threshold: int = 1, training: bool = False) -> []:
     training_file = open(file_name, "r")
-    training = []
-    # each line has several numbers
-    # initialize with 1 for later multiplication with w0
+    file_data = []
+
+    # each line could have several numbers
+    # initialize or not with threshold
     for line in training_file:
-        data = [number_class(threshold)]
+        line_data = [number_class(threshold)] if training else []
         # for each number, append it
         for n in line.split():
-            data.append(number_class(n))
-        training.append(data)
-    return training
-
-
-def read_desired_output(file_name: str, number_class=float) -> []:
-    output_file = open(file_name, "r")
-    output = []
-    for line in output_file:
-        # append the number of the first item in line split
-        # there is only one
-        output.append(number_class(line.split()[0]))
-    return output
+            line_data.append(number_class(n))
+        file_data.append(line_data)
+    return file_data
 
 
 def normalize_data(data: np.ndarray) -> np.ndarray:

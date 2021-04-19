@@ -15,6 +15,6 @@
 
 	"steps_graph_3d": 25,
 
-	"complex_layout": [10, 1],
+	"complex_layout": [10],
 	"pixel_map": "ej3-mapa-de-pixeles.txt"
 }
