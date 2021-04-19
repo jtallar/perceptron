@@ -14,7 +14,7 @@
 	"change_w_iterations": 100,
 	"randomize_w_refs": 100,
 
-	"complex_layout": [3, 1],
+	"complex_layout": [10, 1],
 
 	"steps_graph_3d": 25,
 

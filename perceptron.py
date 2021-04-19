@@ -63,15 +63,14 @@ class SimplePerceptron(object):
 class ComplexPerceptron(object):
 
     def __init__(self, activation_function, activation_function_derived,
-                 layout: [int], dimension: int):
+                 layout: [int], input_dim: int):
 
         self.act_func = activation_function
         self.act_func_der = activation_function_derived
-        self.dim = dimension
 
         # initialize (empty) the general array with layout length
         self.network = np.empty(shape=len(layout), dtype=np.ndarray)
-        self.init_network(layout)
+        self.init_network(layout, input_dim)
 
     # train with the input dataset the complex perceptron
     def train(self, training_set: np.ndarray, expected_out, eta: float = 0.01):
@@ -106,19 +105,20 @@ class ComplexPerceptron(object):
 
     # initializes the entire network of perceptron given a layout
     # it is assumed that the network is defined in size by the amount of levels
-    def init_network(self, layout: [int]) -> None:
+    def init_network(self, layout: [int], input_dim: int) -> None:
         # for each level, get its count of perceptron
         for level in range(len(layout)):
 
             # initialize (empty) level with its amount of perceptron
             self.network[level] = np.empty(shape=layout[level], dtype=SimplePerceptron)
+            dim: int = layout[level - 1] if level != 0 else input_dim
 
             # create the corresponding amount of perceptron
             for index in range(layout[level]):
                 # for each index and level, create the corresponding perceptron
                 self.network[level][index] = \
                     SimplePerceptron(self.act_func, self.act_func_der,
-                                     self.dim, level != len(layout) - 1, index)
+                                     dim, level != len(layout) - 1, index)
 
     def __str__(self):
         return f"CPerceptron=({self.network})"
