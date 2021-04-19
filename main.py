@@ -34,14 +34,16 @@ inc_k: int = config["delta_error_increase_iterations"]
 training_set, expected_out_set, number_class = parser.read_files(config["training_file"], config["expected_out_file"],
                                                                  config["system_threshold"])
 
+# TODO: remover elementos del training para probar cosas ( tambien sus correspondientes expected out)
 # normalize expected out data if required
 expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") or \
-                                                              (config["system"] == "exp") else None
+                                                              (config["system"] == "exp") else expected_out_set
+
 
 # activation function and its derived, if derived is not used then returns always 1
 act_funcs = functions.get_activation_functions(config["system"], config["beta"],
                                                config["retro_error_enhance"], number_class)
-
+print()
 # initialize the perceptron completely
 perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
                                           len(training_set[0]), len(expected_out_set[0]),

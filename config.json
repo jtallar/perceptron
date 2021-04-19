@@ -1,13 +1,13 @@
 {
-	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"training_file": "inputs/ej3-entrenamiento.txt",
+	"expected_out_file": "inputs/ej3-salida-deseada.txt",
 
 	"eta": 0.001,
 	"beta": 0.4,
 	"system_threshold": 1,
 	"iteration_threshold": 500,
 	"error_threshold": 0.0001,
-	"system": "tanh",
+	"system": "linear",
 
 	"layout": [10, 3],
 

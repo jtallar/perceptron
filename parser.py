@@ -1,8 +1,7 @@
 import numpy as np
 
 
-def read_files(training_name: str, out_name: str, normalize_o: bool = False,
-               threshold: int = 1) -> (np.ndarray, np.ndarray):
+def read_files(training_name: str, out_name: str, threshold: int = 1) -> (np.ndarray, np.ndarray, object):
 
     number_class = int
     try:
