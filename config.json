@@ -11,8 +11,10 @@
 
 	"layout": [10, 3],
 
-	"randomize_w": false,
-	"randomize_w_ref": 1,
+	"randomize_w": true,
+	"randomize_w_ref": 1.0,
 	"reset_w": false,
-	"reset_w_iterations": 100
+	"reset_w_iterations": 100,
+
+	"retro_error_enhance": true
 }

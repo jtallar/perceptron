@@ -1,8 +1,9 @@
 import json
-import math
 import random
 
 import numpy as np
+
+import functions
 import parser
 
 # Read configurations from file
@@ -29,24 +30,12 @@ training_set, expected_out_set, number_class = parser.read_files(config["trainin
 # normalize expected out data if required
 expected_out_set = parser.normalize_data(expected_out_set) if (config["system"] == "tanh") | (config["system"] == "exp") else None
 
-# activation function and its derived, if derived is not used then return 1
-beta: float = config["beta"]
-act_funcs_dict = {
-    "sign": [lambda x: np.asarray(np.sign(x), number_class),
-             lambda x: 1],
-
-    "linear": [lambda x: x,
-               lambda x: 1],
-
-    "tanh": [lambda x: np.tanh(x * beta),
-             lambda x: beta * (1 - act_funcs_dict["tanh"][0](x) ** 2)],
-
-    "exp": [lambda x: 1 / (1 + math.e ** (-2 * beta * x)),
-            lambda x: 2 * beta * act_funcs_dict["exp"][0](x) * (1 - act_funcs_dict["exp"][0](x))]
-}
+# activation function and its derived, if derived is not used then returns always 1
+act_funcs = functions.get_activation_functions(config["system"], config["beta"],
+                                               config["retro_error_enhance"], number_class)
 
 # initialize the perceptron completely
-perceptron = perceptron.ComplexPerceptron(*tuple(act_funcs_dict[config["system"]]), config["layout"],
+perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
                                           len(training_set[0]), len(expected_out_set[0]))
 
 # randomize the perceptron initial weights if needed
@@ -71,11 +60,12 @@ while error > error_threshold and i < iteration_threshold:
     # random index to analyze a training set
     index = random.randint(0, p - 1)
 
+    # TODO: adaptative eta
     # train the perceptron with only the given input
     perceptron.train(training_set[index], expected_out_set[index], eta)
 
     # calculate error on the output laye
-    error = perceptron.error(training_set, expected_out_set)
+    error = perceptron.error(training_set, expected_out_set, config["retro_error_enhance"])
 
     # update or not min error
     if error < error_min:
@@ -88,5 +78,5 @@ while error > error_threshold and i < iteration_threshold:
 print(perceptron)
 print(f"error is: {error_min}, iterations: {i}")
 for data, out in zip(training_set, expected_out_set):
-    print(f"in: {data}, out: {perceptron.activation(np.array(data))}, err: {perceptron.error(data, out)}")
+    print(f"in: {data}, expected: {out}, out: {perceptron.activation(np.array(data))}, err: {perceptron.error(data, out)}")
 # finished

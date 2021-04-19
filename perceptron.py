@@ -1,5 +1,6 @@
 import multiprocessing.pool
 import numpy as np
+import traceback
 
 
 class SimplePerceptron(object):
@@ -19,7 +20,7 @@ class SimplePerceptron(object):
     # the two above are only used in hidden layers
     def train(self, out: np.ndarray, sup_w: np.ndarray, sup_delta: np.ndarray, eta: float) -> (np.ndarray, float):
         # activation for this neuron
-        activation_derived = self.__activation_derived(self.input)
+        activation_derived = self.act_func_der(np.dot(self.input, self.w))
 
         # delta sub i using the activation values
         if not self.hidden:
@@ -45,7 +46,7 @@ class SimplePerceptron(object):
         return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
 
     # resets the w to a randomize range
-    def randomize_w(self, ref: int) -> None:
+    def randomize_w(self, ref: float) -> None:
         self.w = np.random.uniform(-ref, ref, len(self.w))
 
     def __str__(self) -> str:
@@ -53,14 +54,6 @@ class SimplePerceptron(object):
 
     def __repr__(self) -> str:
         return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
-
-    # private methods
-
-    # returns the derived activation value/s for the given input in this neuron
-    # returns int or float depending on the input data and activation function
-    def __activation_derived(self, input_arr: np.ndarray):
-        # activation for this neuron
-        return self.act_func_der(np.dot(input_arr, self.w))
 
 
 class ComplexPerceptron(object):
@@ -102,12 +95,16 @@ class ComplexPerceptron(object):
         return activation_values
 
     # calculate the error on the perceptron
-    def error(self, inp: np.ndarray, out: np.ndarray) -> float:
-        return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
+    def error(self, inp: np.ndarray, out: np.ndarray, error_enhance: bool = False) -> float:
+        if not error_enhance:
+            return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
+
+        return np.sum((1 + out) * np.log((1 + out) / (1 + self.activation(inp))) / 2 +
+                      (1 - out) * np.log(np.divide((1 - out), (1 - self.activation(inp)))) / 2)
 
     # resets the w to a randomize range if desired for the entire network
     # if randomize is false, then does nothing
-    def randomize_w(self, ref: int) -> None:
+    def randomize_w(self, ref: float) -> None:
         for layer in self.network:
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
             pool.map(lambda s_p: s_p.randomize_w(ref), layer)
