@@ -19,7 +19,6 @@ beta: float = config["beta"]
 
 training_file_name: str = config["training_file"]
 expected_out_file_name: str = config["expected_out_file"]
-number_class = float if config["float_data"] else int
 threshold: int = config["threshold"]
 error_threshold: float = config["error_threshold"]
 
@@ -30,6 +29,18 @@ change_w_iterations: int = config["change_w_iterations"]
 complex_layout: [int] = config["complex_layout"]
 
 steps_graph_3d: int = config["steps_graph_3d"]
+
+
+# read the files
+number_class = float
+normalize_expected_out_file: bool = (config["system"] == "tanh") | (config["system"] == "exp")
+try:
+    training_data, expected_out_data = parser.read_files(training_file_name, expected_out_file_name,
+                                                         number_class, normalize_expected_out_file, threshold)
+except ValueError:
+    number_class = int
+    training_data, expected_out_data = parser.read_files(training_file_name, expected_out_file_name,
+                                                         number_class, normalize_expected_out_file, threshold)
 
 activation_functions_dict = {
     "sign": [lambda x: np.asarray(np.sign(x), number_class),
@@ -43,16 +54,10 @@ activation_functions_dict = {
 
     "exp": [lambda x: 1 / (1 + math.e ** (-2 * beta * x)),
             lambda x: 2 * beta * activation_functions_dict["exp"][0](x) * (1 - activation_functions_dict["exp"][0](x))]
-
 }
 
 # activation functions and boolean for normalize
 activation_functions = activation_functions_dict[config["system"]]
-normalize_expected_out_file: bool = (config["system"] == "tanh") | (config["system"] == "exp")
-
-# read the files
-training_data, expected_out_data = parser.read_files(training_file_name, expected_out_file_name,
-                                                     number_class, normalize_expected_out_file, threshold)
 
 # initialize the perceptron completely
 perceptron = perceptron.ComplexPerceptron(*tuple(activation_functions), complex_layout, len(training_data[0]))
@@ -82,8 +87,8 @@ while error > error_threshold and i < max_iter:
 
 print(perceptron)
 print(f"error is: {error_min}, iterations: {i}")
-for data in training_data:
-    print(perceptron.activation(np.array(data)))
+for data, out in zip(training_data, expected_out_data):
+    print(f"in: {data}, expected: {out}, out: {perceptron.activation(np.array(data))}")
 # finished
 
 

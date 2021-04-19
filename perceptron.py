@@ -35,10 +35,10 @@ class SimplePerceptron(object):
     # returns int or float depending on the input data and activation function
     def activation(self, input_arr: np.ndarray, training: bool = False):
         if training:
-            self.input = np.asarray(input_arr)
+            self.input = input_arr
 
         # activation for this neuron, could be int or float, or an array in case is the full dataset
-        return self.act_func(np.dot(self.input, self.w))
+        return self.act_func(np.dot(input_arr, self.w))
 
     # returns the derived activation value/s for the given input in this neuron
     # returns int or float depending on the input data and activation function
@@ -89,13 +89,14 @@ class ComplexPerceptron(object):
             sup_aux = np.asarray(sup_aux)
 
     # propagates input along the entire network
-    # in case of training, saves the input for later computation on retro propagation
+    # in case of training, saves  the input for later computation on retro propagation
     # returns the final activation value
     def activation(self, init_input: np.ndarray, training: bool = False):
         activation_values = init_input
         for layer in self.network:
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
             activation_values = pool.map(lambda s_p: s_p.activation(activation_values, training=training), layer)
+            activation_values = np.transpose(np.asarray(activation_values))
 
         return activation_values[0]
 
@@ -111,6 +112,8 @@ class ComplexPerceptron(object):
 
             # initialize (empty) level with its amount of perceptron
             self.network[level] = np.empty(shape=layout[level], dtype=SimplePerceptron)
+
+            # the dimension of the next level is set from the previous or the input data
             dim: int = layout[level - 1] if level != 0 else input_dim
 
             # create the corresponding amount of perceptron
