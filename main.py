@@ -141,6 +141,11 @@ while j < cross_validation_count:
               f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
 
     # TODO: as it will be several metrics, only keep the perceptron and metrics from the most precise
+    # hacer una especie de accuracy, precision, bla bla = metrics.get_metrics(data, expected_out, activation(data), delta(para el rango))
+    # guardar entonces las metricas asociadas al perceptron en un vector, o bien guardar todos los datos de solo aquel que tenga mayor precision
+    # esto se hace al final de cada ciclo de cross validation
+    # si quisieramos hacer graficos como en la teorica de presentacion usaremos una funcion metida en el while original, obteniendo
+    # esas metricas en el medio del procesamiento, aun asi se usaría la misma funcion de arriba, que es solo una
 
     j += 1
 
