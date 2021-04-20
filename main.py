@@ -6,14 +6,13 @@ import numpy as np
 
 import functions
 import parser
-
-# Read configurations from file
 import perceptron
 
 with open("config.json") as file:
     config = json.load(file)
 
 # static non changeable vars
+cross_validation: bool = config["cross_validation"]
 training_ratio: float = config["training_ratio"]
 count_threshold: int = config["count_threshold"]
 error_threshold: float = config["error_threshold"]
@@ -46,28 +45,31 @@ if config["system"] == "tanh" or config["system"] == "exp":
 act_funcs = functions.get_activation_functions(config["system"], config["beta"],
                                                config["retro_error_enhance"], number_class)
 
+# randomize input distribution, used for cross validation
+if cross_validation:
+    full_training_set, full_expected_out_set = parser.randomize_data(full_training_set, full_expected_out_set)
 
 # for cross validations
-cross_validation: bool = config["cross_validation"]
-cross_validation_threshold: int = 1 if not cross_validation else math.floor(1 / (1 - training_ratio))
+cross_validation_count: int = 1 if not cross_validation else math.floor(1 / (1 - training_ratio))
 j: int = 0
 
+
 # do only one if it is not cross validation
-while j < cross_validation_threshold:
+while j < cross_validation_count:
     eta: float = config["eta"]
 
     # keep only a portion of the full data set for training
     training_set, expected_out_set, test_training_set, test_expected_out_set \
-        = parser.extract_subset(full_training_set, full_expected_out_set, training_ratio)
+        = parser.extract_subset(full_training_set, full_expected_out_set, training_ratio, j)
 
     # initialize the perceptron completely
-    perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
-                                              len(training_set[0]), len(expected_out_set[0]),
-                                              config["momentum"], config["momentum_alpha"])
+    c_perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
+                                                len(training_set[0]), len(expected_out_set[0]),
+                                                config["momentum"], config["momentum_alpha"])
 
     # randomize the perceptron initial weights if needed
     if randomize_w:
-        perceptron.randomize_w(randomize_w_ref)
+        c_perceptron.randomize_w(randomize_w_ref)
 
     # start the training iterations
 
@@ -90,20 +92,20 @@ while j < cross_validation_threshold:
 
         # in case there is random w, randomize it again
         if reset_w and (n > p * reset_w_iterations):
-            perceptron.randomize_w(randomize_w_ref)
+            c_perceptron.randomize_w(randomize_w_ref)
             n = 0
 
         # for epoch training is the full training dataset, for iterative its only one random
         train_indexes = [random.randint(0, p - 1)] if not epoch_training else range(p)
         for index in train_indexes:
-            perceptron.train(training_set[index], expected_out_set[index], eta, epoch_training)
+            c_perceptron.train(training_set[index], expected_out_set[index], eta, epoch_training)
 
         # for epoch training update the w once the epoch is finished
         if epoch_training:
-            perceptron.update_w()
+            c_perceptron.update_w()
 
         # calculate error on the output laye
-        new_error = perceptron.error(training_set, expected_out_set, config["retro_error_enhance"])
+        new_error = c_perceptron.error(training_set, expected_out_set, config["retro_error_enhance"])
 
         # adaptive eta
         if general_adaptive_eta:
@@ -128,16 +130,18 @@ while j < cross_validation_threshold:
     for data, out in zip(training_set, expected_out_set):
         print(f"in: {np.round(data, r_pos)}, "
               f"exp: {np.round(out, r_pos)}, "
-              f"out: {np.round(perceptron.activation(np.array(data)), r_pos)}, "
-              f"err: {np.round(perceptron.error(data, out), r_pos)}")
+              f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
+              f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
 
     input("\nPress enter to check the result with the test training set")
     for data, out in zip(test_training_set, test_expected_out_set):
         print(f"in: {np.round(data, r_pos)}, "
               f"exp: {np.round(out, r_pos)}, "
-              f"out: {np.round(perceptron.activation(np.array(data)), r_pos)}, "
-              f"err: {np.round(perceptron.error(data, out), r_pos)}")
+              f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
+              f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
 
     # TODO: as it will be several metrics, only keep the perceptron and metrics from the most precise
+
+    j += 1
 
 # finished
