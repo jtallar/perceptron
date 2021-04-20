@@ -19,11 +19,15 @@ class SimplePerceptron(object):
         self.momentum: bool = momentum
         self.mom_alpha: float = mom_alpha
 
+        # for non iterative training (epoch)
+        self.accu_w = np.zeros(dimension)
+
     # out, a 1D array, is used only in the most superior layer
     # sup_w is a 2D matrix with all the W vectors of the superior layer
     # sup_delta is a 1D array, resulting in all the delta values of the superior layer
     # the two above are only used in hidden layers
-    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_delta: np.ndarray, eta: float) -> (np.ndarray, float):
+    def train(self, out: np.ndarray, sup_w: np.ndarray, sup_delta: np.ndarray, eta: float, epoch: bool = False) \
+            -> (np.ndarray, float):
         # activation for this neuron
         activation_derived = self.act_func_der(np.dot(self.input, self.w))
 
@@ -35,12 +39,13 @@ class SimplePerceptron(object):
 
         # calculate the delta w
         delta_w = (eta * delta * self.input)
-        self.w += delta_w
 
-        # in case of momentum, calculate delta w and update values
-        if self.momentum:
-            self.w += self.mom_alpha * self.prev_delta_w
-            self.prev_delta_w = delta_w
+        if not epoch:
+            # for iterative update
+            self.update_w(delta_w=delta_w, epoch=False)
+        else:
+            # epoch training accumulation
+            self.accu_w += delta_w
 
         return self.w, delta
 
@@ -61,6 +66,19 @@ class SimplePerceptron(object):
     def randomize_w(self, ref: float) -> None:
         self.w = np.random.uniform(-ref, ref, len(self.w))
 
+    # for epoch training delta is the accum value
+    # for iterative training is the delta of each time
+    def update_w(self, delta_w: np.ndarray = np.asarray([]), epoch: bool = False):
+        if epoch:
+            delta_w = self.accu_w
+
+        self.w += delta_w
+
+        # in case of momentum, calculate delta w and update values
+        if self.momentum:
+            self.w += self.mom_alpha * self.prev_delta_w
+            self.prev_delta_w = delta_w
+
     def __str__(self) -> str:
         return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
 
@@ -80,7 +98,8 @@ class ComplexPerceptron(object):
         self.__init_network(layout, input_dim, output_dim, momentum, mom_alpha)
 
     # train with the input dataset the complex perceptron
-    def train(self, training_set: np.ndarray, expected_out: np.ndarray, eta: float = 0.01) -> None:
+    def train(self, training_set: np.ndarray, expected_out: np.ndarray, eta: float = 0.01, epoch: bool = False) \
+            -> None:
 
         # propagate activation values while saving the input data, first one is training set
         self.activation(training_set, training=True)
@@ -90,7 +109,7 @@ class ComplexPerceptron(object):
         sup_delta: np.ndarray = np.empty(1)
         for layer in reversed(self.network):
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
-            sup_w, sup_delta = zip(*pool.map(lambda s_p: s_p.train(expected_out, sup_w, sup_delta, eta), layer))
+            sup_w, sup_delta = zip(*pool.map(lambda s_p: s_p.train(expected_out, sup_w, sup_delta, eta, epoch), layer))
             # convert tuples to lists
             sup_w = np.asarray(sup_w)
             sup_delta = np.asarray(sup_delta)
@@ -121,6 +140,12 @@ class ComplexPerceptron(object):
         for layer in self.network:
             pool = multiprocessing.pool.ThreadPool(processes=len(layer))
             pool.map(lambda s_p: s_p.randomize_w(ref), layer)
+
+    # for epoch training updates each w with its accum
+    def update_w(self) -> None:
+        for layer in self.network:
+            pool = multiprocessing.pool.ThreadPool(processes=len(layer))
+            pool.map(lambda s_p: s_p.update_w(epoch=True), layer)
 
     def __str__(self) -> str:
         out: str = "CPerceptron=("

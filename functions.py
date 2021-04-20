@@ -32,3 +32,23 @@ def get_activation_functions(name: str, beta: float, complex_error_enhance: bool
         return act_funcs_dict[name], act_funcs_der_2_dict[name]
 
     return act_funcs_dict[name], act_funcs_der_dict[name]
+
+
+def adaptive_eta(new_delta_error: float, delta_error: float, delta_error_dec: bool, k: int, eta: float,
+                 dec_k: int, inc_k: int, a, b):
+    # the delta error changes direction, reset k (-1 +1 = 0)
+    if (delta_error > new_delta_error) != delta_error_dec:
+        k = -1
+    if k == dec_k and delta_error_dec:
+        eta += a
+        k = int(dec_k / 2)
+
+    if k == inc_k and not delta_error_dec:
+        eta -= b * eta
+        k = int(inc_k / 2)
+
+    delta_error_dec = delta_error > new_delta_error
+    delta_error = new_delta_error
+    k += 1
+
+    return delta_error, delta_error_dec, k, eta
