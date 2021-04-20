@@ -3,7 +3,7 @@
 	"expected_out_file": "inputs/ej2-salida-deseada.txt",
 
 	"training_ratio": 0.75,
-	"cross_validation": false,
+	"cross_validation": true,
 
 	"eta": 0.001,
 	"beta": 0.4,
@@ -11,7 +11,7 @@
 	"error_threshold": 0.0001,
 	"count_threshold": 2,
 	"epoch_training": true,
-	"system": "sign",
+	"system": "tanh",
 
 	"layout": [],
 

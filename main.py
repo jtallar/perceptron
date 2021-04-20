@@ -7,6 +7,7 @@ import numpy as np
 import functions
 import parser
 import perceptron
+import metrics
 
 with open("config.json") as file:
     config = json.load(file)
@@ -53,6 +54,8 @@ if cross_validation:
 cross_validation_count: int = 1 if not cross_validation else math.floor(1 / (1 - training_ratio))
 j: int = 0
 
+# for metrics
+best_valoration: float = 0
 
 # do only one if it is not cross validation
 while j < cross_validation_count:
@@ -146,6 +149,11 @@ while j < cross_validation_count:
     # esto se hace al final de cada ciclo de cross validation
     # si quisieramos hacer graficos como en la teorica de presentacion usaremos una funcion metida en el while original, obteniendo
     # esas metricas en el medio del procesamiento, aun asi se usaría la misma funcion de arriba, que es solo una
+    delta_eq = 0.5
+    acc_set, err_set, acc_test, err_test, valoration = metrics.get_metrics(c_perceptron, training_set, expected_out_set, test_training_set, test_expected_out_set, delta_eq)
+    if valoration > best_valoration:
+        best_valoration = valoration
+        best_perceptron = c_perceptron
 
     j += 1
 
