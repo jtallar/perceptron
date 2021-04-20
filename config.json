@@ -24,8 +24,8 @@
 	"momentum_alpha": 0.9,
 
 	"general_adaptive_eta": false,
-	"a": 0.0005,
+	"a": 0.3,
 	"delta_error_decrease_iterations": 2,
-	"b": 0.0005,
+	"b": 0.2,
 	"delta_error_increase_iterations": 5
 }

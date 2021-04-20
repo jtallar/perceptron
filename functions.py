@@ -20,15 +20,14 @@ def get_activation_functions(name: str, beta: float, complex_error_enhance: bool
 
     # the derived activation func but with the new error calculus, if it cant be, then return always 1
     act_funcs_der_2_dict = {
-        "sign": lambda x: 1,
-        "linear": lambda x: 1,
         "tanh": lambda x: beta,
-        "exp": lambda x: 2 * beta
     }
 
     # in case it is complex and a desired to make better error
     if complex_error_enhance:
-        # TODO: maybe check if it is not tanh and exit
+        if name != "tanh":
+            print("Cannot enhance error on activation function different than tanh")
+            exit(1)
         return act_funcs_dict[name], act_funcs_der_2_dict[name]
 
     return act_funcs_dict[name], act_funcs_der_dict[name]
@@ -40,7 +39,7 @@ def adaptive_eta(new_delta_error: float, delta_error: float, delta_error_dec: bo
     if (delta_error > new_delta_error) != delta_error_dec:
         k = -1
     if k == dec_k and delta_error_dec:
-        eta += a
+        eta += a * eta
         k = int(dec_k / 2)
 
     if k == inc_k and not delta_error_dec:
