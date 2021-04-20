@@ -101,8 +101,11 @@ while error > error_threshold and i < iteration_threshold:
             k = -1
         if k == dec_k and delta_error_dec:
             eta += a
+            k = int(dec_k / 2)
+
         if k == inc_k and not delta_error_dec:
             eta -= b * eta
+            k = int(inc_k / 2)
 
         delta_error_dec = delta_error > new_delta_error
         delta_error = new_delta_error
