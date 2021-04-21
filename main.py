@@ -51,10 +51,10 @@ if cross_validation:
 
 # for cross validations
 test_ratio: int = 100 - config["training_ratio"]
-if test_ratio != 0 and len(full_training_set) % test_ratio != 0:
+if cross_validation and test_ratio != 0 and len(full_training_set) % test_ratio != 0:
     print(f"Training ration must be divisor of training set length ({len(full_training_set)})")
     exit(1)
-cross_validation_count: int = 1 if test_ratio == 0 else test_ratio
+cross_validation_count: int = 1 if not cross_validation or test_ratio == 0 else test_ratio
 j: int = 0
 
 # for metrics
@@ -73,7 +73,7 @@ while j < cross_validation_count:
 
     # keep only a portion of the full data set for training
     training_set, expected_out_set, test_training_set, test_expected_out_set \
-        = parser.extract_subset(full_training_set, full_expected_out_set, test_ratio, j)
+        = parser.extract_subset(full_training_set, full_expected_out_set, test_ratio, cross_validation, j)
 
     # initialize the perceptron completely
     c_perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
@@ -122,8 +122,8 @@ while j < cross_validation_count:
 
         # adaptive eta
         if general_adaptive_eta:
-            delta_error, delta_error_dec, k, eta = functions.adaptive_eta(error-new_error, delta_error, delta_error_dec, k,
-                                                                          eta, *adaptive_params)
+            delta_error, delta_error_dec, k, eta = functions.adaptive_eta(error-new_error, delta_error, delta_error_dec,
+                                                                          k, eta, *adaptive_params)
         error = new_error
 
         # update or not min error
@@ -154,7 +154,7 @@ while j < cross_validation_count:
         best_perceptron = c_perceptron
 
     # print only if printing enabled and has more than one cross validation iteration
-    if config["print_each_cross_validation"] and test_ratio != 0:
+    if config["print_each_cross_validation"] and test_ratio != 0 and cross_validation:
         print(f"Cross validation try {j+1}/{cross_validation_count}, training set accuracy: {acc_train}, "
               f"test set accuracy: {acc_test}")
         print(str(c_perceptron) + "\n")
