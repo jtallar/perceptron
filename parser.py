@@ -51,11 +51,7 @@ def randomize_data(full_training_data: np.ndarray, full_expected_out_data: np.nd
 def extract_subset(full_training_data: np.ndarray, full_expected_out_data: np.ndarray,
                    ratio: int, cross_validation_count: int) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
 
-    if len(full_training_data) % ratio != 0:
-        print(f"Training ration must be divisor of training set length ({len(full_training_data)})")
-        exit(1)
-
-    length_test: int = int(len(full_training_data) / ratio)
+    length_test: int = 0 if ratio == 0 else int(len(full_training_data) / ratio)
 
     training_data: np.ndarray = full_training_data
     expected_out_data: np.ndarray = full_expected_out_data
@@ -63,6 +59,7 @@ def extract_subset(full_training_data: np.ndarray, full_expected_out_data: np.nd
     test_training_data = []
     test_expected_out_data = []
 
+    print(range(cross_validation_count * length_test, (cross_validation_count + 1) * length_test))
     for i in range(cross_validation_count * length_test, (cross_validation_count + 1) * length_test):
         # move from full list to test
         test_training_data.append(training_data[i])

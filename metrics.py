@@ -11,3 +11,7 @@ def accuracy(in_set, expected_out, delta):  # data, expected_out, activation(dat
 
 def appreciation(train_accuracy, train_error, test_accuracy, test_error):
     return 0.5 * train_accuracy + 0.5 * test_accuracy
+
+
+def appreciation_single(train_accuracy, train_error):
+    return train_accuracy

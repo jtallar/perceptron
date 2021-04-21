@@ -50,8 +50,11 @@ if cross_validation:
     full_training_set, full_expected_out_set = parser.randomize_data(full_training_set, full_expected_out_set)
 
 # for cross validations
-training_ratio: int = config["training_ratio"]
-cross_validation_count: int = training_ratio
+test_ratio: int = 100 - config["training_ratio"]
+if test_ratio != 0 and len(full_training_set) % test_ratio != 0:
+    print(f"Training ration must be divisor of training set length ({len(full_training_set)})")
+    exit(1)
+cross_validation_count: int = 1 if test_ratio == 0 else test_ratio
 j: int = 0
 
 # for metrics
@@ -70,7 +73,7 @@ while j < cross_validation_count:
 
     # keep only a portion of the full data set for training
     training_set, expected_out_set, test_training_set, test_expected_out_set \
-        = parser.extract_subset(full_training_set, full_expected_out_set, training_ratio, j)
+        = parser.extract_subset(full_training_set, full_expected_out_set, test_ratio, j)
 
     # initialize the perceptron completely
     c_perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
@@ -135,22 +138,32 @@ while j < cross_validation_count:
     # get metrics and error values, save the best perceptron
     acc_train = metrics.accuracy(c_perceptron.activation(training_set), expected_out_set, delta_eq)
     err_train = c_perceptron.error(training_set, expected_out_set)
-    acc_test = metrics.accuracy(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
-    err_test = c_perceptron.error(test_training_set, test_expected_out_set)
-    appreciation = metrics.appreciation(acc_train, err_train, acc_test, err_test)
+    appreciation = metrics.appreciation_single(acc_train, err_train)
+    acc_test = 0
+    err_test = 0
+
+    # in case is a full training set then do not attempt this
+    if test_ratio != 0:
+        acc_test = metrics.accuracy(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
+        err_test = c_perceptron.error(test_training_set, test_expected_out_set)
+        appreciation = metrics.appreciation(acc_train, err_train, acc_test, err_test)
+
     if appreciation >= best_appreciation:
         best_acc_train, best_acc_test, best_err_train, best_err_test = (acc_train, acc_test, err_train, err_test)
         best_appreciation = appreciation
         best_perceptron = c_perceptron
 
-    if config["print_each_cross_validation"]:
+    # print only if printing enabled and has more than one cross validation iteration
+    if config["print_each_cross_validation"] and test_ratio != 0:
         print(f"Cross validation try {j+1}/{cross_validation_count}, training set accuracy: {acc_train}, "
               f"test set accuracy: {acc_test}")
         print(str(c_perceptron) + "\n")
     j += 1
 
-print(f"Best perceptron training set accuracy: {best_acc_train}, test set accuracy: {best_acc_test}")
-print(f"Best perceptron raining set error: {best_err_train}, test set error: {best_err_test}")
+
+print(f"Best perceptron training set accuracy: {best_acc_train} and error: {best_err_train}")
+if test_ratio != 0:
+    print(f"Best perceptron test set error: {best_acc_test}, and error: {best_err_test}")
 print(best_perceptron)
 
 # finished
