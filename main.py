@@ -150,11 +150,19 @@ while j < cross_validation_count:
     # si quisieramos hacer graficos como en la teorica de presentacion usaremos una funcion metida en el while original, obteniendo
     # esas metricas en el medio del procesamiento, aun asi se usaría la misma funcion de arriba, que es solo una
     delta_eq = 0.5
-    acc_set, err_set, acc_test, err_test, valoration = metrics.get_metrics(c_perceptron, training_set, expected_out_set, test_training_set, test_expected_out_set, delta_eq)
+    acc_set = metrics.get_metrics(c_perceptron.activation(training_set), expected_out_set, delta_eq)
+    err_set = c_perceptron.error(training_set, expected_out_set)
+    acc_test = metrics.get_metrics(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
+    err_test = c_perceptron.error(test_training_set, test_expected_out_set)
+    valoration = metrics.get_valoration(acc_set, err_set, acc_test, err_test)
     if valoration > best_valoration:
         best_valoration = valoration
         best_perceptron = c_perceptron
-
+    
+    # para testeo
+    print(acc_set, acc_test, valoration)
+    
     j += 1
 
+print(best_perceptron)
 # finished
