@@ -133,11 +133,11 @@ while j < cross_validation_count:
     # finished, perceptron trained
 
     # get metrics and error values, save the best perceptron
-    acc_train = metrics.get_metrics(c_perceptron.activation(training_set), expected_out_set, delta_eq)
+    acc_train = metrics.accuracy(c_perceptron.activation(training_set), expected_out_set, delta_eq)
     err_train = c_perceptron.error(training_set, expected_out_set)
-    acc_test = metrics.get_metrics(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
+    acc_test = metrics.accuracy(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
     err_test = c_perceptron.error(test_training_set, test_expected_out_set)
-    appreciation = metrics.get_appreciation(acc_train, err_train, acc_test, err_test)
+    appreciation = metrics.appreciation(acc_train, err_train, acc_test, err_test)
     if appreciation >= best_appreciation:
         best_acc_train, best_acc_test, best_err_train, best_err_test = (acc_train, acc_test, err_train, err_test)
         best_appreciation = appreciation
