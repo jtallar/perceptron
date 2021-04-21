@@ -7,5 +7,5 @@ def get_metrics(in_set, expected_out, delta): # data, expected_out, activation(d
             success+=1
     return success / len(in_set)
 
-def get_valoration(train_accuracy, train_error, test_accuracy, test_error):
+def get_appreciation(train_accuracy, train_error, test_accuracy, test_error):
     return 0.5*train_accuracy + 0.5*test_accuracy

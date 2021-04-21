@@ -55,8 +55,14 @@ cross_validation_count: int = 1 if not cross_validation else math.floor(1 / (1 -
 j: int = 0
 
 # for metrics
-best_valoration: float = 0
-delta_eq : float = config["delta_met"]
+best_appreciation: float = 0
+delta_eq: float = config["delta_met"]
+best_acc_train: float = np.inf
+best_acc_test: float = np.inf
+best_err_train: float = np.inf
+best_err_test: float = np.inf
+best_perceptron: perceptron.ComplexPerceptron
+
 
 # do only one if it is not cross validation
 while j < cross_validation_count:
@@ -126,37 +132,22 @@ while j < cross_validation_count:
 
     # finished, perceptron trained
 
-    acc_set = metrics.get_metrics(c_perceptron.activation(training_set), expected_out_set, delta_eq)
-    err_set = c_perceptron.error(training_set, expected_out_set)
+    # get metrics and error values, save the best perceptron
+    acc_train = metrics.get_metrics(c_perceptron.activation(training_set), expected_out_set, delta_eq)
+    err_train = c_perceptron.error(training_set, expected_out_set)
     acc_test = metrics.get_metrics(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
     err_test = c_perceptron.error(test_training_set, test_expected_out_set)
-    valoration = metrics.get_valoration(acc_set, err_set, acc_test, err_test)
-    if valoration >= best_valoration:
-        best_valoration = valoration
+    appreciation = metrics.get_appreciation(acc_train, err_train, acc_test, err_test)
+    if appreciation >= best_appreciation:
+        best_acc_train, best_acc_test, best_err_train, best_err_test = (acc_train, acc_test, err_train, err_test)
+        best_appreciation = appreciation
         best_perceptron = c_perceptron
-    
-    # para testeo
-    print(acc_set, acc_test, valoration)
 
     j += 1
 
-end_motive: str = "threshold error" if error <= error_threshold else "max iterations"
-print(f"Training finished due to {end_motive} reached, error: {error}, min error: {error_min}, iterations: {i}")
-input("\nPress enter to check the error per the given training set")
-r_pos: int = 3
-for data, out in zip(training_set, expected_out_set):
-    print(f"in: {np.round(data, r_pos)}, "
-            f"exp: {np.round(out, r_pos)}, "
-            f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
-            f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
-            
-input("\nPress enter to check the result with the test training set")
-for data, out in zip(test_training_set, test_expected_out_set):
-    print(f"in: {np.round(data, r_pos)}, "
-            f"exp: {np.round(out, r_pos)}, "
-            f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
-            f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
 
+print(f"Training set accuracy: {best_acc_train}, test set accuracy: {best_acc_test}")
+print(f"Training set error: {best_err_train}, test set error: {best_err_test}")
 print(best_perceptron)
 
 # finished
