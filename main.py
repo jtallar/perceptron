@@ -56,7 +56,7 @@ j: int = 0
 
 # for metrics
 best_appreciation: float = 0
-delta_eq: float = config["delta_met"]
+delta_eq: float = config["delta_metrics"]
 best_acc_train: float = np.inf
 best_acc_test: float = np.inf
 best_err_train: float = np.inf

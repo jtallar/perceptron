@@ -4,7 +4,7 @@
 
 	"training_ratio": 0.75,
 	"cross_validation": true,
-	"delta_met" : 0.5,
+	"delta_metrics" : 0.5,
 
 	"eta": 0.001,
 	"beta": 0.4,
