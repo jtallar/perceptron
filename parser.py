@@ -49,21 +49,29 @@ def randomize_data(full_training_data: np.ndarray, full_expected_out_data: np.nd
 
 
 def extract_subset(full_training_data: np.ndarray, full_expected_out_data: np.ndarray,
-                   ratio: float, cross_validation_count: int) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+                   ratio: int, cross_validation_count: int) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
 
-    length_train: int = math.floor(len(full_training_data) * ratio)
-    length_test: int = len(full_training_data) - length_train
+    if len(full_training_data) % ratio != 0:
+        print(f"Training ration must be divisor of training set length ({len(full_training_data)})")
+        exit(1)
+
+    length_test: int = int(len(full_training_data) / ratio)
+
+    training_data: np.ndarray = full_training_data
+    expected_out_data: np.ndarray = full_expected_out_data
 
     test_training_data = []
     test_expected_out_data = []
 
     for i in range(cross_validation_count * length_test, (cross_validation_count + 1) * length_test):
         # move from full list to test
-        test_training_data.append(full_training_data[i])
-        test_expected_out_data.append((full_expected_out_data[i]))
+        test_training_data.append(training_data[i])
+        test_expected_out_data.append((expected_out_data[i]))
 
-        # remove data from test
-        training_data = np.delete(full_training_data, i, 0)
-        expected_out_data = np.delete(full_expected_out_data, i, 0)
+    delete_indexes: np.ndarray = np.arange(cross_validation_count * length_test, (cross_validation_count + 1) * length_test)
+
+    # remove data from test
+    training_data = np.delete(training_data, delete_indexes, 0)
+    expected_out_data = np.delete(expected_out_data, delete_indexes, 0)
 
     return training_data, expected_out_data, np.array(test_training_data), np.array(test_expected_out_data)

@@ -14,7 +14,6 @@ with open("config.json") as file:
 
 # static non changeable vars
 cross_validation: bool = config["cross_validation"]
-training_ratio: float = config["training_ratio"]
 count_threshold: int = config["count_threshold"]
 error_threshold: float = config["error_threshold"]
 epoch_training: bool = config["epoch_training"]
@@ -51,7 +50,8 @@ if cross_validation:
     full_training_set, full_expected_out_set = parser.randomize_data(full_training_set, full_expected_out_set)
 
 # for cross validations
-cross_validation_count: int = 1 if not cross_validation else math.floor(1 / (1 - training_ratio))
+training_ratio: int = config["training_ratio"]
+cross_validation_count: int = training_ratio
 j: int = 0
 
 # for metrics
@@ -143,11 +143,14 @@ while j < cross_validation_count:
         best_appreciation = appreciation
         best_perceptron = c_perceptron
 
+    if config["print_each_cross_validation"]:
+        print(f"Cross validation try {j+1}/{cross_validation_count}, training set accuracy: {acc_train}, "
+              f"test set accuracy: {acc_test}")
+        print(str(c_perceptron) + "\n")
     j += 1
 
-
-print(f"Training set accuracy: {best_acc_train}, test set accuracy: {best_acc_test}")
-print(f"Training set error: {best_err_train}, test set error: {best_err_test}")
+print(f"Best perceptron training set accuracy: {best_acc_train}, test set accuracy: {best_acc_test}")
+print(f"Best perceptron raining set error: {best_err_train}, test set error: {best_err_test}")
 print(best_perceptron)
 
 # finished

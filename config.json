@@ -1,18 +1,18 @@
 {
-	"training_file": "inputs/ej1-entrenamiento.txt",
-	"expected_out_file": "inputs/ej1b-salida-deseada.txt",
+	"training_file": "inputs/ej2-entrenamiento.txt",
+	"expected_out_file": "inputs/ej2-salida-deseada.txt",
 
-	"training_ratio": 0.75,
+	"training_ratio": 10,
 	"cross_validation": true,
-	"delta_metrics" : 0.5,
+	"delta_metrics" : 0.05,
 
-	"eta": 0.001,
+	"eta": 0.005,
 	"beta": 0.4,
 	"system_threshold": 1,
 	"error_threshold": 0.0001,
-	"count_threshold": 2,
+	"count_threshold": 1,
 	"epoch_training": true,
-	"system": "sign",
+	"system": "linear",
 
 	"layout": [],
 
@@ -30,5 +30,7 @@
 	"a": 0.3,
 	"delta_error_decrease_iterations": 2,
 	"b": 0.2,
-	"delta_error_increase_iterations": 5
+	"delta_error_increase_iterations": 5,
+
+	"print_each_cross_validation": true
 }

@@ -162,10 +162,10 @@ class ComplexPerceptron(object):
     # private methods
 
     # initializes the entire network of perceptron given a layout
-    def __init_network(self, layout: [int], input_dim: int, output_dim: int,
+    def __init_network(self, hidden_layout: [int], input_dim: int, output_dim: int,
                        momentum: bool = False, mom_alpha: float = 0.9) -> None:
         # the final amount of perceptron depends on expected output dimension
-        layout.append(output_dim)
+        layout: np.ndarray = np.append(np.array(hidden_layout, dtype=int), output_dim)
 
         # initialize the length of the network
         self.network = np.empty(shape=len(layout), dtype=np.ndarray)
