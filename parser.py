@@ -59,7 +59,6 @@ def extract_subset(full_training_data: np.ndarray, full_expected_out_data: np.nd
     test_training_data = []
     test_expected_out_data = []
 
-    print(range(cross_validation_count * length_test, (cross_validation_count + 1) * length_test))
     for i in range(cross_validation_count * length_test, (cross_validation_count + 1) * length_test):
         # move from full list to test
         test_training_data.append(training_data[i])
