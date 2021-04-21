@@ -1,9 +1,10 @@
 {
-	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"training_file": "inputs/ej1-entrenamiento.txt",
+	"expected_out_file": "inputs/ej1b-salida-deseada.txt",
 
 	"training_ratio": 0.75,
 	"cross_validation": true,
+	"delta_met" : 0.5,
 
 	"eta": 0.001,
 	"beta": 0.4,
@@ -11,7 +12,7 @@
 	"error_threshold": 0.0001,
 	"count_threshold": 2,
 	"epoch_training": true,
-	"system": "tanh",
+	"system": "sign",
 
 	"layout": [],
 
