@@ -1,9 +1,10 @@
 {
-	"training_file": "inputs/ej2-entrenamiento.txt",
-	"expected_out_file": "inputs/ej2-salida-deseada.txt",
+	"training_file": "inputs/ej1-entrenamiento.txt",
+	"expected_out_file": "inputs/ej1b-salida-deseada.txt",
 
 	"training_ratio": 0.75,
-	"cross_validation": false,
+	"cross_validation": true,
+	"delta_met" : 0.5,
 
 	"eta": 0.001,
 	"beta": 0.4,

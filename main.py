@@ -7,6 +7,7 @@ import numpy as np
 import functions
 import parser
 import perceptron
+import metrics
 
 with open("config.json") as file:
     config = json.load(file)
@@ -53,6 +54,9 @@ if cross_validation:
 cross_validation_count: int = 1 if not cross_validation else math.floor(1 / (1 - training_ratio))
 j: int = 0
 
+# for metrics
+best_valoration: float = 0
+delta_eq : float = config["delta_met"]
 
 # do only one if it is not cross validation
 while j < cross_validation_count:
@@ -122,31 +126,37 @@ while j < cross_validation_count:
 
     # finished, perceptron trained
 
-    # TODO: delete all this and replace with proper metrics
-    end_motive: str = "threshold error" if error <= error_threshold else "max iterations"
-    print(f"Training finished due to {end_motive} reached, error: {error}, min error: {error_min}, iterations: {i}")
-    input("\nPress enter to check the error per the given training set")
-    r_pos: int = 3
-    for data, out in zip(training_set, expected_out_set):
-        print(f"in: {np.round(data, r_pos)}, "
-              f"exp: {np.round(out, r_pos)}, "
-              f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
-              f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
-
-    input("\nPress enter to check the result with the test training set")
-    for data, out in zip(test_training_set, test_expected_out_set):
-        print(f"in: {np.round(data, r_pos)}, "
-              f"exp: {np.round(out, r_pos)}, "
-              f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
-              f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
-
-    # TODO: as it will be several metrics, only keep the perceptron and metrics from the most precise
-    # hacer una especie de accuracy, precision, bla bla = metrics.get_metrics(data, expected_out, activation(data), delta(para el rango))
-    # guardar entonces las metricas asociadas al perceptron en un vector, o bien guardar todos los datos de solo aquel que tenga mayor precision
-    # esto se hace al final de cada ciclo de cross validation
-    # si quisieramos hacer graficos como en la teorica de presentacion usaremos una funcion metida en el while original, obteniendo
-    # esas metricas en el medio del procesamiento, aun asi se usaría la misma funcion de arriba, que es solo una
+    acc_set = metrics.get_metrics(c_perceptron.activation(training_set), expected_out_set, delta_eq)
+    err_set = c_perceptron.error(training_set, expected_out_set)
+    acc_test = metrics.get_metrics(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
+    err_test = c_perceptron.error(test_training_set, test_expected_out_set)
+    valoration = metrics.get_valoration(acc_set, err_set, acc_test, err_test)
+    if valoration >= best_valoration:
+        best_valoration = valoration
+        best_perceptron = c_perceptron
+    
+    # para testeo
+    print(acc_set, acc_test, valoration)
 
     j += 1
+
+end_motive: str = "threshold error" if error <= error_threshold else "max iterations"
+print(f"Training finished due to {end_motive} reached, error: {error}, min error: {error_min}, iterations: {i}")
+input("\nPress enter to check the error per the given training set")
+r_pos: int = 3
+for data, out in zip(training_set, expected_out_set):
+    print(f"in: {np.round(data, r_pos)}, "
+            f"exp: {np.round(out, r_pos)}, "
+            f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
+            f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
+            
+input("\nPress enter to check the result with the test training set")
+for data, out in zip(test_training_set, test_expected_out_set):
+    print(f"in: {np.round(data, r_pos)}, "
+            f"exp: {np.round(out, r_pos)}, "
+            f"out: {np.round(c_perceptron.activation(np.array(data)), r_pos)}, "
+            f"err: {np.round(c_perceptron.error(data, out), r_pos)}")
+
+print(best_perceptron)
 
 # finished
