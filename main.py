@@ -68,6 +68,13 @@ best_metrics: dict = {}
 recent_metrics: dict = {}
 delta_eq: float = config["delta_metrics"]
 
+cross_acc_train = []
+cross_acc_test = []
+cross_err_train = []
+cross_err_test = []
+cross_x = []
+plt.rcParams.update({'font.size': 20})
+
 # do only one if it is not cross validation
 while j < cross_validation_count:
     eta: float = config["eta"]
@@ -103,6 +110,8 @@ while j < cross_validation_count:
 
     it = []
     err = []
+    acc_test_total = []
+    acc_train_total = []
 
     # finish only when error is 0 or reached max iterations/epochs
     while error > error_threshold and i < count_threshold:
@@ -135,10 +144,18 @@ while j < cross_validation_count:
             error_min = error
         
         it.append(i)
-        err.append(error)
 
         i += 1
         n += 1
+
+        # get metrics and error values, save the best perceptron
+        best_metrics, recent_metrics = metrics.metrics({}, c_perceptron, training_set, expected_out_set,
+                                                    test_training_set, test_expected_out_set, delta_eq,
+                                                    normalize_out, trust_min)
+        acc_train_total.append(best_metrics["acc_train"]*100)
+        acc_test_total.append(best_metrics["acc_test"]*100)
+        err.append(best_metrics["err_train"])
+
     print(error)
     # finished, perceptron trained
 
@@ -149,14 +166,26 @@ while j < cross_validation_count:
 
     # print only if printing enabled and has more than one cross validation iteration
     if config["print_each_cross_validation"] and test_ratio != 0 and cross_validation:
+        cross_x.append(j)
         print(f"Cross validation try {j+1}/{cross_validation_count}, "
               f"training set accuracy: {np.around(recent_metrics['acc_train'] * 100, 2)}%, "
               f"test set accuracy: {np.around(recent_metrics['acc_test'] * 100, 2)}%")
+        cross_acc_train.append(recent_metrics['acc_train'] * 100)
+        cross_acc_test.append(recent_metrics['acc_test'] * 100)
+        cross_err_train.append(recent_metrics['err_train'])
+        cross_err_test.append(recent_metrics['err_test'])
+    
+    if not cross_validation:
+        metrics.plot_values(it, "Iterations", err,"Error")
+        metrics.plot_multiple_values([it], "Iterations", [acc_train_total], "Accuracy", ["Training"], min_val=0, max_val=100)
+
     j += 1
 
-plt.plot(it, err)
-plt.show()
+if cross_validation:
+    metrics.plot_multiple_values([cross_x, cross_x], "Iterations", [cross_err_train, cross_err_test], "Error", ["Training", "Test"], colors=["red", "yellow"])
+    metrics.plot_multiple_values([cross_x, cross_x], "Iterations", [cross_acc_train, cross_acc_test], "Accuracy", ["Training", "Test"], min_val=0, max_val=100, colors=["blue", 'orange'])
 
+plt.show(block=True)
 print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'] * 100, 2)}%, "
       f"and error: {np.around(best_metrics['err_train'], dec_round)}")
 if test_ratio != 0:

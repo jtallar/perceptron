@@ -4,6 +4,7 @@ import numpy as np
 
 import perceptron
 
+import matplotlib.pyplot as plt
 
 def function(x, trust) -> int:
     if x >= trust:
@@ -82,3 +83,42 @@ def metrics(old_metrics: dict, p: perceptron.ComplexPerceptron, training_set: np
         return old_metrics, new_metrics
 
     return new_metrics, new_metrics
+
+
+def plot_values(x_values, x_label, y_values, y_label, min_val=None, max_val=None, save_name=None, color="red"):
+    _, ax = plt.subplots(figsize=(12, 10))  # Create a figure containing a single axes.
+    ax.plot(x_values, y_values, color)  # Plot some data on the axes
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    
+    if min_val is not None and max_val is not None:
+        ax.set_ylim([min_val, max_val])
+
+    plt.grid()
+    plt.tight_layout()
+    if save_name:
+        plt.savefig(save_name)
+    else:
+        plt.show(block=False)
+
+def plot_multiple_values(x_values_superlist, x_label, y_values_superlist, y_label, legends, min_val=None, max_val=None, save_name=None, colors=None):
+    fig, ax = plt.subplots(figsize=(12, 10))  # Create a figure containing a single axes.
+    
+    colors = []
+    for i in range(len(x_values_superlist)):
+        p = ax.plot(x_values_superlist[i], y_values_superlist[i], label=legends[i])  # Plot some data on the axes
+        colors.append(p[-1].get_color())
+        
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    
+    if min_val is not None and max_val is not None:
+        ax.set_ylim([min_val, max_val])
+
+    plt.grid()
+    plt.tight_layout()
+    fig.legend(loc='lower right')
+    if save_name:
+        plt.savefig(save_name)
+    else:
+        plt.show(block=False)

@@ -2,7 +2,7 @@
 	"training_file": "inputs/ej2-entrenamiento.txt",
 	"expected_out_file": "inputs/ej2-salida-deseada.txt",
 
-	"training_ratio": 90,
+	"training_ratio": 50,
 	"cross_validation": false,
 	"delta_metrics" : 0.1,
 
@@ -23,17 +23,17 @@
 
 	"retro_error_enhance": false,
 
-	"momentum": false,
+	"momentum": true,
 	"momentum_alpha": 0.9,
 
-	"general_adaptive_eta": false,
-	"a": 0.4,
-	"delta_error_decrease_iterations": 2,
-	"b": 0.3,
-	"delta_error_increase_iterations": 3,
+	"general_adaptive_eta": true,
+	"a": 0.05,
+	"delta_error_decrease_iterations": 10,
+	"b": 0.1,
+	"delta_error_increase_iterations": 15,
 
 	"print_each_cross_validation": true,
 	"normalize_out": false,
-	"trust_min": 0.3,
+	"trust_min": 0.15,
 	"float_rounding_dec": 3
 }
