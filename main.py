@@ -146,8 +146,7 @@ while j < cross_validation_count:
               f"test set accuracy: {np.around(recent_metrics['acc_test'], 4) * 100}%")
     j += 1
 
-input("\nFinished processing, press enter to get general and accuracy and error: ")
-print(f"Best perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
+print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
       f"and error: {np.around(best_metrics['err_train'], dec_round)}")
 if test_ratio != 0:
     print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'], 4) * 100}%, "
