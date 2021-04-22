@@ -142,14 +142,14 @@ while j < cross_validation_count:
     # print only if printing enabled and has more than one cross validation iteration
     if config["print_each_cross_validation"] and test_ratio != 0 and cross_validation:
         print(f"Cross validation try {j+1}/{cross_validation_count}, "
-              f"training set accuracy: {np.around(recent_metrics['acc_train'], 4) * 100}%, "
-              f"test set accuracy: {np.around(recent_metrics['acc_test'], 4) * 100}%")
+              f"training set accuracy: {np.around(recent_metrics['acc_train'] * 100, 2)}%, "
+              f"test set accuracy: {np.around(recent_metrics['acc_test'] * 100, 2)}%")
     j += 1
 
-print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
+print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'] * 100, 2)}%, "
       f"and error: {np.around(best_metrics['err_train'], dec_round)}")
 if test_ratio != 0:
-    print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'], 4) * 100}%, "
+    print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'] * 100, 2)}%, "
           f"and error: {np.around(best_metrics['err_test'], dec_round)}")
 
 # input("\nPress enter to show training set results evaluated: ")
@@ -170,7 +170,7 @@ if test_ratio != 0:
 # input("\nPress enter to show perceptron data: ")
 # print(best_metrics['perceptron'])
 
-input("Press enter to print config")
+input("\nPress enter to print config: ")
 print(config)
 
 # finished
