@@ -49,12 +49,9 @@ def randomize_data(full_training_data: np.ndarray, full_expected_out_data: np.nd
 
 
 def extract_subset(full_training_data: np.ndarray, full_expected_out_data: np.ndarray,
-                   ratio: int, cross_validation: bool, cross_validation_count: int) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+                   ratio: int, cross_validation_count: int) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
 
-    if cross_validation:
-        length_test: int = 0 if ratio == 0 else int(len(full_training_data) / ratio)
-    else:
-        length_test: int = int(len(full_training_data) * ratio / 100)
+    length_test: int = int(len(full_training_data) * ratio / 100)
 
     training_data: np.ndarray = full_training_data
     expected_out_data: np.ndarray = full_expected_out_data

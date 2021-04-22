@@ -1,5 +1,4 @@
 import json
-import math
 import random
 
 import numpy as np
@@ -56,10 +55,10 @@ if cross_validation:
 
 # for cross validations
 test_ratio: int = 100 - config["training_ratio"]
-if cross_validation and test_ratio != 0 and len(full_training_set) % test_ratio != 0:
+if cross_validation and test_ratio != 0 and len(full_training_set) % int(100 / test_ratio) != 0:
     print(f"Training ration must be divisor of training set length ({len(full_training_set)})")
     exit(1)
-cross_validation_count: int = 1 if not cross_validation or test_ratio == 0 else test_ratio
+cross_validation_count: int = 1 if not cross_validation or test_ratio == 0 else int(100 / test_ratio)
 j: int = 0
 
 # for metrics
@@ -73,7 +72,7 @@ while j < cross_validation_count:
 
     # keep only a portion of the full data set for training
     training_set, expected_out_set, test_training_set, test_expected_out_set \
-        = parser.extract_subset(full_training_set, full_expected_out_set, test_ratio, cross_validation, j)
+        = parser.extract_subset(full_training_set, full_expected_out_set, test_ratio, j)
 
     # initialize the perceptron completely
     c_perceptron = perceptron.ComplexPerceptron(*act_funcs, config["layout"],
@@ -143,14 +142,16 @@ while j < cross_validation_count:
     # print only if printing enabled and has more than one cross validation iteration
     if config["print_each_cross_validation"] and test_ratio != 0 and cross_validation:
         print(f"Cross validation try {j+1}/{cross_validation_count}, "
-              f"training set accuracy: {recent_metrics['acc_train']}, "
-              f"test set accuracy: {recent_metrics['acc_test']}")
+              f"training set accuracy: {np.around(recent_metrics['acc_train'], 4) * 100}%, "
+              f"test set accuracy: {np.around(recent_metrics['acc_test'], 4) * 100}%")
     j += 1
 
 input("\nFinished processing, press enter to get general and accuracy and error: ")
-print(f"Best perceptron training set accuracy: {best_metrics['acc_train']} and error: {best_metrics['err_train']}")
+print(f"Best perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
+      f"and error: {np.around(best_metrics['err_train'], dec_round)}")
 if test_ratio != 0:
-    print(f"Best perceptron test set accuracy: {best_metrics['acc_test']}, and error: {best_metrics['err_test']}")
+    print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'], 4) * 100}%, "
+          f"and error: {np.around(best_metrics['err_test'], dec_round)}")
 
 input("\nPress enter to show training set results evaluated: ")
 for data, out, pred in \

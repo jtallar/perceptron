@@ -2,7 +2,7 @@
 	"training_file": "inputs/ej3-entrenamiento.txt",
 	"expected_out_file": "inputs/ej3-salida-deseada.txt",
 
-	"training_ratio": 90,
+	"training_ratio": 80,
 	"cross_validation": true,
 	"delta_metrics" : 0.05,
 
