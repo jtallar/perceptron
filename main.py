@@ -152,22 +152,25 @@ if test_ratio != 0:
     print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'], 4) * 100}%, "
           f"and error: {np.around(best_metrics['err_test'], dec_round)}")
 
-input("\nPress enter to show training set results evaluated: ")
-for data, out, pred in \
-        zip(np.around(best_metrics['training_set'], dec_round),
-            np.around(best_metrics['expected_out_set'], dec_round),
-            np.around(best_metrics['train_predicted'], dec_round)):
-    print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
-
-if test_ratio != 0:
-    input("\nPress enter to show testing set results evaluated: ")
-    for data, out, pred in \
-            zip(np.around(best_metrics['test_training_set'], dec_round),
-                np.around(best_metrics['test_expected_out_set'], dec_round),
-                np.around(best_metrics['test_predicted'], dec_round)):
-        print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
+# input("\nPress enter to show training set results evaluated: ")
+# for data, out, pred in \
+#         zip(np.around(best_metrics['training_set'], dec_round),
+#             np.around(best_metrics['expected_out_set'], dec_round),
+#             np.around(best_metrics['train_predicted'], dec_round)):
+#     print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
+#
+# if test_ratio != 0:
+#     input("\nPress enter to show testing set results evaluated: ")
+#     for data, out, pred in \
+#             zip(np.around(best_metrics['test_training_set'], dec_round),
+#                 np.around(best_metrics['test_expected_out_set'], dec_round),
+#                 np.around(best_metrics['test_predicted'], dec_round)):
+#         print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
 
 # input("\nPress enter to show perceptron data: ")
 # print(best_metrics['perceptron'])
+
+input("Press enter to print config")
+print(config)
 
 # finished
