@@ -157,7 +157,7 @@ while j < cross_validation_count:
 plt.plot(it, err)
 plt.show()
 
-print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
+print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'] * 100, 2)}%, "
       f"and error: {np.around(best_metrics['err_train'], dec_round)}")
 if test_ratio != 0:
     print(f"Best perceptron test set accuracy: {np.around(best_metrics['acc_test'] * 100, 2)}%, "
