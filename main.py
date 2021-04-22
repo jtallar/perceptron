@@ -8,6 +8,8 @@ import parser
 import perceptron
 import metrics
 
+import matplotlib.pyplot as plt
+
 with open("config.json") as file:
     config = json.load(file)
 
@@ -99,6 +101,9 @@ while j < cross_validation_count:
     delta_error_dec: bool = True
     k: int = 0
 
+    it = []
+    err = []
+
     # finish only when error is 0 or reached max iterations/epochs
     while error > error_threshold and i < count_threshold:
 
@@ -128,10 +133,13 @@ while j < cross_validation_count:
         # update or not min error
         if error < error_min:
             error_min = error
+        
+        it.append(i)
+        err.append(error)
 
         i += 1
         n += 1
-
+    print(error)
     # finished, perceptron trained
 
     # get metrics and error values, save the best perceptron
@@ -145,6 +153,9 @@ while j < cross_validation_count:
               f"training set accuracy: {np.around(recent_metrics['acc_train'], 4) * 100}%, "
               f"test set accuracy: {np.around(recent_metrics['acc_test'], 4) * 100}%")
     j += 1
+
+plt.plot(it, err)
+plt.show()
 
 print(f"\nBest perceptron training set accuracy: {np.around(best_metrics['acc_train'], 4) * 100}%, "
       f"and error: {np.around(best_metrics['err_train'], dec_round)}")
