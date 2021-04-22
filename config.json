@@ -6,7 +6,7 @@
 	"cross_validation": false,
 	"delta_metrics" : 0.1,
 
-	"eta": 0.0005,
+	"eta": 0.001,
 	"beta": 0.5,
 	"system_threshold": 1,
 	"error_threshold": 0.0001,
@@ -27,13 +27,13 @@
 	"momentum_alpha": 0.9,
 
 	"general_adaptive_eta": false,
-	"a": 0.3,
+	"a": 0.4,
 	"delta_error_decrease_iterations": 2,
-	"b": 0.2,
-	"delta_error_increase_iterations": 5,
+	"b": 0.3,
+	"delta_error_increase_iterations": 3,
 
 	"print_each_cross_validation": true,
 	"normalize_out": false,
-	"trust_min": 0.15,
+	"trust_min": 0.3,
 	"float_rounding_dec": 3
 }
