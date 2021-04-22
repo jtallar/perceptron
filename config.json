@@ -35,5 +35,7 @@
 	"print_each_cross_validation": true,
 	"normalize_out": false,
 	"trust_min": 0.15,
-	"float_rounding_dec": 3
+	"float_rounding_dec": 3,
+
+	"plot": true
 }

@@ -38,6 +38,8 @@ normalize_out: bool = config["normalize_out"]
 trust_min: float = config["trust_min"]
 dec_round: int = config["float_rounding_dec"]
 
+plot_bool: bool = config["plot"]
+
 # read the files and get the training data, and expected out data
 full_training_set, full_expected_out_set, number_class = parser.read_files(config["training_file"],
                                                                            config["expected_out_file"],
@@ -148,13 +150,14 @@ while j < cross_validation_count:
         i += 1
         n += 1
 
-        # get metrics and error values, save the best perceptron
-        best_metrics, recent_metrics = metrics.metrics({}, c_perceptron, training_set, expected_out_set,
-                                                    test_training_set, test_expected_out_set, delta_eq,
-                                                    normalize_out, trust_min)
-        acc_train_total.append(best_metrics["acc_train"]*100)
-        acc_test_total.append(best_metrics["acc_test"]*100)
-        err.append(best_metrics["err_train"])
+        if plot_bool:
+            # get metrics and error values for plots
+            _, best_metrics = metrics.metrics({}, c_perceptron, training_set, expected_out_set,
+                                                        test_training_set, test_expected_out_set, delta_eq,
+                                                        normalize_out, trust_min)
+            acc_train_total.append(best_metrics["acc_train"]*100)
+            acc_test_total.append(best_metrics["acc_test"]*100)
+            err.append(best_metrics["err_train"])
 
     print(error)
     # finished, perceptron trained
@@ -175,14 +178,14 @@ while j < cross_validation_count:
         cross_err_train.append(recent_metrics['err_train'])
         cross_err_test.append(recent_metrics['err_test'])
     
-    if not cross_validation:
+    if plot_bool and not cross_validation:
         metrics.plot_values(it, "Iterations", err,"Error")
         metrics.plot_multiple_values([it], "Iterations", [acc_train_total], "Accuracy", ["Training"], min_val=0, max_val=100)
         metrics.plot_multiple_values([range(len(full_expected_out_set)), range(len(full_expected_out_set))], "Indep Var", [full_expected_out_set, c_perceptron.activation(full_training_set)], "Value", ["Real", "Predicted"], marker='o')
 
     j += 1
 
-if cross_validation:
+if plot_bool and cross_validation:
     metrics.plot_multiple_values([cross_x, cross_x], "Iterations", [cross_err_train, cross_err_test], "Error", ["Training", "Test"], colors=["red", "yellow"])
     metrics.plot_multiple_values([cross_x, cross_x], "Iterations", [cross_acc_train, cross_acc_test], "Accuracy", ["Training", "Test"], min_val=0, max_val=100, colors=["blue", 'orange'])
 
