@@ -178,6 +178,7 @@ while j < cross_validation_count:
     if not cross_validation:
         metrics.plot_values(it, "Iterations", err,"Error")
         metrics.plot_multiple_values([it], "Iterations", [acc_train_total], "Accuracy", ["Training"], min_val=0, max_val=100)
+        metrics.plot_multiple_values([range(len(full_expected_out_set)), range(len(full_expected_out_set))], "Indep Var", [full_expected_out_set, c_perceptron.activation(full_training_set)], "Value", ["Real", "Predicted"], marker='o')
 
     j += 1
 

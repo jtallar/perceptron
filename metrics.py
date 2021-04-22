@@ -101,12 +101,12 @@ def plot_values(x_values, x_label, y_values, y_label, min_val=None, max_val=None
     else:
         plt.show(block=False)
 
-def plot_multiple_values(x_values_superlist, x_label, y_values_superlist, y_label, legends, min_val=None, max_val=None, save_name=None, colors=None):
+def plot_multiple_values(x_values_superlist, x_label, y_values_superlist, y_label, legends, min_val=None, max_val=None, save_name=None, colors=None, marker=None):
     fig, ax = plt.subplots(figsize=(12, 10))  # Create a figure containing a single axes.
     
     colors = []
     for i in range(len(x_values_superlist)):
-        p = ax.plot(x_values_superlist[i], y_values_superlist[i], label=legends[i])  # Plot some data on the axes
+        p = ax.plot(x_values_superlist[i], y_values_superlist[i], label=legends[i], marker=marker, markersize=3)  # Plot some data on the axes
         colors.append(p[-1].get_color())
         
     ax.set_xlabel(x_label)
@@ -117,7 +117,7 @@ def plot_multiple_values(x_values_superlist, x_label, y_values_superlist, y_labe
 
     plt.grid()
     plt.tight_layout()
-    fig.legend(loc='lower right')
+    fig.legend(loc='lower right', ncol=2)
     if save_name:
         plt.savefig(save_name)
     else:
