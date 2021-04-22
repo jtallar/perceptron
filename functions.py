@@ -38,12 +38,15 @@ def adaptive_eta(new_delta_error: float, delta_error: float, delta_error_dec: bo
     # the delta error changes direction, reset k (-1 +1 = 0)
     if (delta_error > new_delta_error) != delta_error_dec:
         k = -1
+
     if k == dec_k and delta_error_dec:
         eta += a * eta
+        print(f"New update on adaptive eta to: {eta}, after {k} consecutive increase iterations")
         k = int(dec_k / 2)
 
     if k == inc_k and not delta_error_dec:
         eta -= b * eta
+        print(f"New update on adaptive eta to: {eta}, after {k} consecutive decrease iterations")
         k = int(inc_k / 2)
 
     delta_error_dec = delta_error > new_delta_error

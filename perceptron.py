@@ -80,10 +80,10 @@ class SimplePerceptron(object):
             self.prev_delta_w = delta_w
 
     def __str__(self) -> str:
-        return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
+        return f"SP=(i={self.index}, w={self.w})"
 
     def __repr__(self) -> str:
-        return f"SPerceptron=(i={self.index}, hid={self.hidden}, w={self.w})"
+        return f"SP=(i={self.index}, w={self.w})"
 
 
 class ComplexPerceptron(object):

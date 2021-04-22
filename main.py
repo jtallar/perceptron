@@ -32,6 +32,11 @@ b: float = config["b"]
 inc_k: int = config["delta_error_increase_iterations"]
 adaptive_params: tuple = tuple([dec_k, inc_k, a, b])
 
+# metrics params
+normalize_out: bool = config["normalize_out"]
+trust_min: float = config["trust_min"]
+dec_round: int = config["float_rounding_dec"]
+
 # read the files and get the training data, and expected out data
 full_training_set, full_expected_out_set, number_class = parser.read_files(config["training_file"],
                                                                            config["expected_out_file"],
@@ -58,14 +63,9 @@ cross_validation_count: int = 1 if not cross_validation or test_ratio == 0 else 
 j: int = 0
 
 # for metrics
-best_appreciation: float = 0
+best_metrics: dict = {}
+recent_metrics: dict = {}
 delta_eq: float = config["delta_metrics"]
-best_acc_train: float = np.inf
-best_acc_test: float = np.inf
-best_err_train: float = np.inf
-best_err_test: float = np.inf
-best_perceptron: perceptron.ComplexPerceptron
-
 
 # do only one if it is not cross validation
 while j < cross_validation_count:
@@ -136,34 +136,38 @@ while j < cross_validation_count:
     # finished, perceptron trained
 
     # get metrics and error values, save the best perceptron
-    acc_train = metrics.accuracy(c_perceptron.activation(training_set), expected_out_set, delta_eq)
-    err_train = c_perceptron.error(training_set, expected_out_set)
-    appreciation = metrics.appreciation_single(acc_train, err_train)
-    acc_test = 0
-    err_test = 0
-
-    # in case is a full training set then do not attempt this
-    if test_ratio != 0:
-        acc_test = metrics.accuracy(c_perceptron.activation(test_training_set), test_expected_out_set, delta_eq)
-        err_test = c_perceptron.error(test_training_set, test_expected_out_set)
-        appreciation = metrics.appreciation(acc_train, err_train, acc_test, err_test)
-
-    if appreciation >= best_appreciation:
-        best_acc_train, best_acc_test, best_err_train, best_err_test = (acc_train, acc_test, err_train, err_test)
-        best_appreciation = appreciation
-        best_perceptron = c_perceptron
+    best_metrics, recent_metrics = metrics.metrics(best_metrics, c_perceptron, training_set, expected_out_set,
+                                                   test_training_set, test_expected_out_set, delta_eq,
+                                                   normalize_out, trust_min)
 
     # print only if printing enabled and has more than one cross validation iteration
     if config["print_each_cross_validation"] and test_ratio != 0 and cross_validation:
-        print(f"Cross validation try {j+1}/{cross_validation_count}, training set accuracy: {acc_train}, "
-              f"test set accuracy: {acc_test}")
-        print(str(c_perceptron) + "\n")
+        print(f"Cross validation try {j+1}/{cross_validation_count}, "
+              f"training set accuracy: {recent_metrics['acc_train']}, "
+              f"test set accuracy: {recent_metrics['acc_test']}")
     j += 1
 
-
-print(f"Best perceptron training set accuracy: {best_acc_train} and error: {best_err_train}")
+input("\nFinished processing, press enter to get general and accuracy and error: ")
+print(f"Best perceptron training set accuracy: {best_metrics['acc_train']} and error: {best_metrics['err_train']}")
 if test_ratio != 0:
-    print(f"Best perceptron test set error: {best_acc_test}, and error: {best_err_test}")
-print(best_perceptron)
+    print(f"Best perceptron test set accuracy: {best_metrics['acc_test']}, and error: {best_metrics['err_test']}")
+
+input("\nPress enter to show training set results evaluated: ")
+for data, out, pred in \
+        zip(np.around(best_metrics['training_set'], dec_round),
+            np.around(best_metrics['expected_out_set'], dec_round),
+            np.around(best_metrics['train_predicted'], dec_round)):
+    print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
+
+if test_ratio != 0:
+    input("\nPress enter to show testing set results evaluated: ")
+    for data, out, pred in \
+            zip(np.around(best_metrics['test_training_set'], dec_round),
+                np.around(best_metrics['test_expected_out_set'], dec_round),
+                np.around(best_metrics['test_predicted'], dec_round)):
+        print(f"In: {data.astype(number_class)}, out: {out.astype(number_class)}, perceptron: {pred}")
+
+# input("\nPress enter to show perceptron data: ")
+# print(best_metrics['perceptron'])
 
 # finished
