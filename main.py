@@ -54,8 +54,8 @@ act_funcs = functions.get_activation_functions(config["system"], config["beta"],
                                                config["retro_error_enhance"], number_class)
 
 # randomize input distribution, used for cross validation
-if cross_validation:
-    full_training_set, full_expected_out_set = parser.randomize_data(full_training_set, full_expected_out_set)
+# if cross_validation:
+full_training_set, full_expected_out_set = parser.randomize_data(full_training_set, full_expected_out_set)
 
 # for cross validations
 test_ratio: int = 100 - config["training_ratio"]
@@ -117,6 +117,7 @@ while j < cross_validation_count:
 
     # finish only when error is 0 or reached max iterations/epochs
     while error > error_threshold and i < count_threshold:
+        if i % 100 == 0: print(f'Iteration {i}')
 
         # in case there is random w, randomize it again
         if reset_w and (n > p * reset_w_iterations):
@@ -180,8 +181,8 @@ while j < cross_validation_count:
     
     if plot_bool and not cross_validation:
         metrics.plot_values(it, "Iterations", err,"Error")
-        metrics.plot_multiple_values([it], "Iterations", [acc_train_total], "Accuracy", ["Training"], min_val=0, max_val=100)
-        metrics.plot_multiple_values([range(len(full_expected_out_set)), range(len(full_expected_out_set))], "Indep Var", [full_expected_out_set, c_perceptron.activation(full_training_set)], "Value", ["Real", "Predicted"], marker='o')
+        metrics.plot_multiple_values([it, it], "Iterations", [acc_train_total, acc_test_total], "Accuracy", ["Training", "Test"], min_val=0, max_val=100)
+        metrics.plot_multiple_values([range(len(full_expected_out_set)), range(len(full_expected_out_set))], "Indep Var", [full_expected_out_set, c_perceptron.activation(full_training_set)], "Value", ["Real", "Predicted"], marker='o', markersize=[30, 15], linestyle='')
 
     j += 1
 
