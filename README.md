@@ -1,4 +1,5 @@
 # perceptron-solver
+# Perceptron Simple y Multicapa
 
 ## Requerimientos
 Para correr el solver, es necesario tener instalado `Python 3`.
@@ -142,6 +143,51 @@ Todas las configuraciones de ejecución se establecen en el archivo `config.json
 	"print_each_cross_validation": true,
 	"normalize_out": false,
 	"trust_min": 0.15,
+	"float_rounding_dec": 3,
+
+	"plot": true
+}
+```
+
+### Ejemplo 3
+```json
+{
+	"training_file": "inputs/ej3-entrenamiento.txt",
+	"expected_out_file": "inputs/ej3-salida-deseada.txt",
+
+	"training_ratio": 0,
+	"cross_validation": false,
+	"delta_metrics" : 0.1,
+
+	"eta": 0.01,
+	"beta": 0.5,
+	"system_threshold": 1,
+	"error_threshold": 0.0,
+	"count_threshold": 100,
+	"epoch_training": true,
+	"system": "tanh",
+
+	"layout": [10,10,10],
+
+	"randomize_w": true,
+	"randomize_w_ref": 1.0,
+	"reset_w": false,
+	"reset_w_iterations": 100,
+
+	"retro_error_enhance": false,
+
+	"momentum": true,
+	"momentum_alpha": 0.9,
+
+	"general_adaptive_eta": false,
+	"a": 0.05,
+	"delta_error_decrease_iterations": 10,
+	"b": 0.1,
+	"delta_error_increase_iterations": 15,
+
+	"print_each_cross_validation": true,
+	"normalize_out": true,
+	"trust_min": 0.7,
 	"float_rounding_dec": 3,
 
 	"plot": true
