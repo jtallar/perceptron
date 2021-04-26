@@ -1,4 +1,3 @@
-# perceptron-solver
 # Perceptron Simple y Multicapa
 
 ## Requerimientos
