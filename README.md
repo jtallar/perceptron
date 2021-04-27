@@ -153,9 +153,9 @@ Todas las configuraciones de ejecución se establecen en el archivo `config.json
 ```json
 {
 	"training_file": "inputs/ej3-entrenamiento.txt",
-	"expected_out_file": "inputs/ej3-salida-deseada.txt",
+	"expected_out_file": "inputs/ej3b-salida-deseada.txt",
 
-	"training_ratio": 0,
+	"training_ratio": 50,
 	"cross_validation": false,
 	"delta_metrics" : 0.1,
 
