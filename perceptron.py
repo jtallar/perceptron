@@ -129,7 +129,8 @@ class ComplexPerceptron(object):
     # calculate the error on the perceptron
     def error(self, inp: np.ndarray, out: np.ndarray, error_enhance: bool = False) -> float:
         if not error_enhance:
-            return np.sum(np.abs((out - self.activation(inp)) ** 2)) / 2
+            return (np.linalg.norm(out[:, 1:] - self.activation(inp)[:, 1:]) ** 2) / len(out[:, 1:])
+
 
         return np.sum((1 + out) * np.log(np.divide((1 + out), (1 + self.activation(inp)))) / 2 +
                       (1 - out) * np.log(np.divide((1 - out), (1 - self.activation(inp)))) / 2)
